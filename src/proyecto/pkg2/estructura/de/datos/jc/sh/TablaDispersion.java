@@ -2,7 +2,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Tabla hash simple para guardar documentos.
- * @author noahh
+ * @author shdz
  */
 public class TablaDispersion {
     

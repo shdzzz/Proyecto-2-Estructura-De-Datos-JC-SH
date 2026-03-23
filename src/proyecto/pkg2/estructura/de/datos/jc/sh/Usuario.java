@@ -2,7 +2,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Clase para guardar datos de un usuario.
- * @author noahh
+ * @author shdz
  */
 public class Usuario {
     

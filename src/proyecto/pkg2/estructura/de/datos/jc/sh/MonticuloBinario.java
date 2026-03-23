@@ -2,7 +2,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Cola de prioridad simple.
- * @author noahh
+ * @author shdz
  */
 public class MonticuloBinario {
     
