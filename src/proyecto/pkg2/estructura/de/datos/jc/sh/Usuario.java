@@ -30,6 +30,11 @@ public class Usuario {
         this.tipo = tipo;
     }
     
+    /**
+     * Obtiene el nivel de prioridad numérico del usuario.
+     * 
+     * @return Nivel de prioridad (1=alta, 2=media, 3=baja)
+     */
     public int getPrioridad() {
         if (tipo.equals("prioridad_alta")) {
             return 1;

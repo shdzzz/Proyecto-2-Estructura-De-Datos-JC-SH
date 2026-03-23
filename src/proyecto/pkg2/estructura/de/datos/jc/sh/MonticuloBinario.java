@@ -16,6 +16,13 @@ public class MonticuloBinario {
         this.tamaño = 0;
     }
     
+    /**
+     * Inserta un documento en la cola de prioridad.
+     * Usa prioridadCalculada como criterio principal, etiquetaTiempo como desempate.
+     * 
+     * @param doc Documento a insertar
+     * @return true si se insertó correctamente, false si está lleno
+     */
     public boolean insertar(NodoDocumento doc) {
         if (tamaño >= capacidad) {
             return false;
@@ -27,8 +34,14 @@ public class MonticuloBinario {
         int actual = tamaño;
         while (actual > 0) {
             int padre = (actual - 1) / 2;
-            if (monticulo[actual].getEtiquetaTiempo() >= monticulo[padre].getEtiquetaTiempo()) {
+            
+            // Comparar por prioridadCalculada, usar etiquetaTiempo como desempate
+            if (monticulo[actual].getPrioridadCalculada() > monticulo[padre].getPrioridadCalculada()) {
                 break;
+            } else if (monticulo[actual].getPrioridadCalculada() == monticulo[padre].getPrioridadCalculada()) {
+                if (monticulo[actual].getEtiquetaTiempo() >= monticulo[padre].getEtiquetaTiempo()) {
+                    break;
+                }
             }
             
             NodoDocumento temp = monticulo[actual];
@@ -45,6 +58,12 @@ public class MonticuloBinario {
         return true;
     }
     
+    /**
+     * Elimina el documento con mayor prioridad (menor valor).
+     * Usa prioridadCalculada como criterio principal, etiquetaTiempo como desempate.
+     * 
+     * @return Documento eliminado, null si está vacío
+     */
     public NodoDocumento eliminar_min() {
         if (tamaño == 0) {
             return null;
@@ -64,12 +83,26 @@ public class MonticuloBinario {
                 int derecho = 2 * actual + 2;
                 int menor = actual;
                 
-                if (izquierdo < tamaño && monticulo[izquierdo].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
-                    menor = izquierdo;
+                // Comparar con hijo izquierdo
+                if (izquierdo < tamaño) {
+                    if (monticulo[izquierdo].getPrioridadCalculada() < monticulo[menor].getPrioridadCalculada()) {
+                        menor = izquierdo;
+                    } else if (monticulo[izquierdo].getPrioridadCalculada() == monticulo[menor].getPrioridadCalculada()) {
+                        if (monticulo[izquierdo].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
+                            menor = izquierdo;
+                        }
+                    }
                 }
                 
-                if (derecho < tamaño && monticulo[derecho].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
-                    menor = derecho;
+                // Comparar con hijo derecho
+                if (derecho < tamaño) {
+                    if (monticulo[derecho].getPrioridadCalculada() < monticulo[menor].getPrioridadCalculada()) {
+                        menor = derecho;
+                    } else if (monticulo[derecho].getPrioridadCalculada() == monticulo[menor].getPrioridadCalculada()) {
+                        if (monticulo[derecho].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
+                            menor = derecho;
+                        }
+                    }
                 }
                 
                 if (menor == actual) {

@@ -13,6 +13,7 @@ public class NodoDocumento {
     private boolean esPrioritario;
     private String nombreUsuario;
     private int indiceEnMonticulo;
+    private int prioridadCalculada;
     
     public NodoDocumento(String nombre, int tamaño, String tipo, long etiquetaTiempo, 
                         boolean esPrioritario, String nombreUsuario) {
@@ -23,6 +24,7 @@ public class NodoDocumento {
         this.esPrioritario = esPrioritario;
         this.nombreUsuario = nombreUsuario;
         this.indiceEnMonticulo = -1;
+        this.prioridadCalculada = 0; // Se calculará después
     }
     
     public String getNombre() {
@@ -79,5 +81,33 @@ public class NodoDocumento {
     
     public void setIndiceEnMonticulo(int indiceEnMonticulo) {
         this.indiceEnMonticulo = indiceEnMonticulo;
+    }
+    
+    /**
+     * Obtiene la prioridad calculada del documento.
+     * 
+     * @return Valor de prioridad calculada (menor = mayor prioridad)
+     */
+    public int getPrioridadCalculada() {
+        return prioridadCalculada;
+    }
+    
+    /**
+     * Establece la prioridad calculada del documento.
+     * 
+     * @param prioridadCalculada Nuevo valor de prioridad
+     */
+    public void setPrioridadCalculada(int prioridadCalculada) {
+        this.prioridadCalculada = prioridadCalculada;
+    }
+    
+    /**
+     * Calcula la prioridad basada en prioridad del usuario y tamaño del documento.
+     * Fórmula: (prioridadUsuario * 100) + tamañoDocumento
+     * 
+     * @param nivelPrioridadUsuario Nivel de prioridad del usuario (1=alta, 2=media, 3=baja)
+     */
+    public void calcularPrioridad(int nivelPrioridadUsuario) {
+        this.prioridadCalculada = (nivelPrioridadUsuario * 100) + tamaño;
     }
 }
