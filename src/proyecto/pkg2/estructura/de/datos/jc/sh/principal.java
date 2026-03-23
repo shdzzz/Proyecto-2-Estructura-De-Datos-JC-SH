@@ -253,7 +253,8 @@ public class principal extends javax.swing.JFrame {
 			for (int i = 0; i< datosUsuarios.length; i++){
 				String nombre = datosUsuarios[i][0];
 				String tipo = datosUsuarios[i][1];
-				//MiTablaHash.agregar(nombre, tipo);
+				Usuario nuevoUsuario = new Usuario(nombre, tipo);
+				MiTablaHash.agregarUsuario(nombre, tipo, nuevoUsuario);
 				modeloUsuarios.addElement(nombre + " (" + tipo + " )");
 			}
 			JOptionPane.showMessageDialog(this, "se cargaron " + datosUsuarios.length + " usuarios exitosamente.", "Carga completa", JOptionPane.INFORMATION_MESSAGE);

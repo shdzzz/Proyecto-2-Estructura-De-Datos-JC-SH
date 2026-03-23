@@ -1,7 +1,7 @@
 package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
- * Tabla hash simple para guardar documentos.
+ * Tabla hash simple para guardar usuarios.
  * @author shdz
  */
 public class TablaDispersion {
@@ -29,30 +29,29 @@ public class TablaDispersion {
         return hash;
     }
     
-    public void agregarDocumento(String nombreUsuario, String nombreDocumento, 
-                                long etiquetaTiempo, NodoDocumento documento) {
+    public void agregarUsuario(String nombre, String tipo, Usuario usuario) {
         if ((double) tamaño / capacidad > 0.75) {
             rehash();
         }
         
-        int indice = funcionHash(nombreUsuario);
-        tabla[indice].agregar(new InfoDocumento(nombreDocumento, etiquetaTiempo, documento));
+        int indice = funcionHash(nombre);
+        tabla[indice].agregar(new InfoUsuario(nombre, tipo, usuario));
         tamaño++;
     }
     
-    public ListaEnlazada buscarDocumentosUsuario(String nombreUsuario) {
-        int indice = funcionHash(nombreUsuario);
+    public ListaEnlazada buscarUsuario(String nombre) {
+        int indice = funcionHash(nombre);
         if (tabla[indice].estaVacia()) {
             return null;
         }
         return tabla[indice];
     }
     
-    public boolean eliminarDocumento(String nombreUsuario, String nombreDocumento, long etiquetaTiempo) {
-        int indice = funcionHash(nombreUsuario);
+    public boolean eliminarUsuario(String nombre) {
+        int indice = funcionHash(nombre);
         ListaEnlazada cubeta = tabla[indice];
         
-        boolean eliminado = cubeta.eliminar(nombreDocumento, etiquetaTiempo);
+        boolean eliminado = cubeta.eliminar(nombre);
         
         if (eliminado && cubeta.estaVacia()) {
             tamaño--;
@@ -61,8 +60,8 @@ public class TablaDispersion {
         return eliminado;
     }
     
-    public boolean existeUsuario(String nombreUsuario) {
-        return !tabla[funcionHash(nombreUsuario)].estaVacia();
+    public boolean existeUsuario(String nombre) {
+        return !tabla[funcionHash(nombre)].estaVacia();
     }
     
     public int getTamaño() {
@@ -85,27 +84,27 @@ public class TablaDispersion {
         this.capacidad = nuevaCapacidad;
     }
     
-    public static class InfoDocumento {
-        String nombreDocumento;
-        long etiquetaTiempo;
-        NodoDocumento documento;
+    public static class InfoUsuario {
+        String nombre;
+        String tipo;
+        Usuario usuario;
         
-        InfoDocumento(String nombreDocumento, long etiquetaTiempo, NodoDocumento documento) {
-            this.nombreDocumento = nombreDocumento;
-            this.etiquetaTiempo = etiquetaTiempo;
-            this.documento = documento;
+        InfoUsuario(String nombre, String tipo, Usuario usuario) {
+            this.nombre = nombre;
+            this.tipo = tipo;
+            this.usuario = usuario;
         }
         
-        public String getNombreDocumento() {
-            return nombreDocumento;
+        public String getNombre() {
+            return nombre;
         }
         
-        public long getEtiquetaTiempo() {
-            return etiquetaTiempo;
+        public String getTipo() {
+            return tipo;
         }
         
-        public NodoDocumento getDocumento() {
-            return documento;
+        public Usuario getUsuario() {
+            return usuario;
         }
     }
     
@@ -113,16 +112,16 @@ public class TablaDispersion {
         private NodoLista cabeza;
         
         private static class NodoLista {
-            InfoDocumento dato;
+            InfoUsuario dato;
             NodoLista siguiente;
             
-            NodoLista(InfoDocumento dato) {
+            NodoLista(InfoUsuario dato) {
                 this.dato = dato;
                 this.siguiente = null;
             }
         }
         
-        public void agregar(InfoDocumento dato) {
+        public void agregar(InfoUsuario dato) {
             NodoLista nuevo = new NodoLista(dato);
             if (cabeza == null) {
                 cabeza = nuevo;
@@ -135,19 +134,17 @@ public class TablaDispersion {
             }
         }
         
-        public boolean eliminar(String nombreDocumento, long etiquetaTiempo) {
+        public boolean eliminar(String nombre) {
             if (cabeza == null) return false;
             
-            if (cabeza.dato.nombreDocumento.equals(nombreDocumento) && 
-                cabeza.dato.etiquetaTiempo == etiquetaTiempo) {
+            if (cabeza.dato.nombre.equals(nombre)) {
                 cabeza = cabeza.siguiente;
                 return true;
             }
             
             NodoLista actual = cabeza;
             while (actual.siguiente != null) {
-                if (actual.siguiente.dato.nombreDocumento.equals(nombreDocumento) && 
-                    actual.siguiente.dato.etiquetaTiempo == etiquetaTiempo) {
+                if (actual.siguiente.dato.nombre.equals(nombre)) {
                     actual.siguiente = actual.siguiente.siguiente;
                     return true;
                 }
