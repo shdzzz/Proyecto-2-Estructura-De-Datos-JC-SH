@@ -146,6 +146,9 @@ public class principal extends javax.swing.JFrame {
 
                 esPrioritario.setText("Es prioritario");
 
+                jButton1.addActionListener(this::jButton1ActionPerformed);
+                jButton5.addActionListener(this::jButton5ActionPerformed);
+
                 javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
                 jPanel1.setLayout(jPanel1Layout);
                 jPanel1Layout.setHorizontalGroup(
@@ -465,6 +468,120 @@ public class principal extends javax.swing.JFrame {
 		}
         }//GEN-LAST:event_ListadeUsuariosValueChanged
 
+        private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+		// Liberar Impresora - Eliminar el documento con mayor prioridad
+		if (MiMonticulo.estaVacio()) {
+			JOptionPane.showMessageDialog(this, "No hay documentos en la cola de impresión.", "Cola Vacía", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		NodoDocumento docImpreso = MiMonticulo.eliminar_min();
+		if (docImpreso != null) {
+			// Incrementar el tiempo del reloj
+			miReloj.incrementarTiempo();
+			
+			// Actualizar vistas
+			actualizarVistaLista();
+			actualizarVistaArbol();
+			
+			// Actualizar la tabla del usuario correspondiente
+			String nombreUsuario = docImpreso.getNombreUsuario();
+			Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
+			if (user != null) {
+				actualizarTablaDocumentos(user);
+			}
+			
+			JOptionPane.showMessageDialog(this, 
+				"Documento impreso: " + docImpreso.getNombre() + 
+				"\nUsuario: " + docImpreso.getNombreUsuario() + 
+				"\nTamaño: " + docImpreso.getTamaño() + " páginas" +
+				"\nTiempo actual: " + miReloj.getTiempoActual(), 
+				"Impresión Completada", JOptionPane.INFORMATION_MESSAGE);
+		}
+        }//GEN-LAST:event_jButton1ActionPerformed
+
+        private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+		// Cancelar en cola - Eliminar un documento específico de la cola
+		if (MiMonticulo.estaVacio()) {
+			JOptionPane.showMessageDialog(this, "No hay documentos en la cola de impresión.", "Cola Vacía", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		// Obtener el usuario seleccionado
+		int idxUsuario = ListadeUsuarios.getSelectedIndex();
+		if (idxUsuario == -1) {
+			JOptionPane.showMessageDialog(this, "Seleccione un usuario de la lista.", "Seleccione Usuario", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		
+		String nombreUser = modeloUsuarios.getElementAt(idxUsuario).split(" \\(")[0].trim();
+		Usuario user = MiTablaHash.buscarUsuario(nombreUser);
+		
+		if (user == null) {
+			JOptionPane.showMessageDialog(this, "Usuario no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		// Obtener documentos del usuario que están en cola
+		java.util.List<NodoDocumento> docsEnCola = new java.util.ArrayList<>();
+		for (NodoDocumento doc : user.getDocumentos()) {
+			if (doc.isEnCola()) {
+				docsEnCola.add(doc);
+			}
+		}
+		
+		if (docsEnCola.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "El usuario seleccionado no tiene documentos en cola.", "Sin Documentos en Cola", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+		
+		// Crear lista de opciones para el usuario
+		String[] opciones = new String[docsEnCola.size()];
+		for (int i = 0; i < docsEnCola.size(); i++) {
+			NodoDocumento doc = docsEnCola.get(i);
+			opciones[i] = doc.getNombre() + " (" + doc.getTamaño() + " págs)";
+		}
+		
+		String seleccion = (String) JOptionPane.showInputDialog(this, 
+			"Seleccione el documento a cancelar:",
+			"Cancelar Documento en Cola",
+			JOptionPane.QUESTION_MESSAGE,
+			null,
+			opciones,
+			opciones[0]);
+		
+		if (seleccion != null) {
+			// Encontrar el documento seleccionado
+			NodoDocumento docACancelar = null;
+			for (NodoDocumento doc : docsEnCola) {
+				if (seleccion.startsWith(doc.getNombre())) {
+					docACancelar = doc;
+					break;
+				}
+			}
+			
+			if (docACancelar != null) {
+				// Eliminar del montículo
+				if (MiMonticulo.eliminarDocumento(docACancelar)) {
+					// Incrementar el tiempo del reloj
+					miReloj.incrementarTiempo();
+					
+					// Actualizar vistas
+					actualizarVistaLista();
+					actualizarVistaArbol();
+					actualizarTablaDocumentos(user);
+					
+					JOptionPane.showMessageDialog(this, 
+						"Documento cancelado: " + docACancelar.getNombre() + 
+						"\nTiempo actual: " + miReloj.getTiempoActual(), 
+						"Cancelación Completada", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					JOptionPane.showMessageDialog(this, "Error al cancelar el documento.", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+        }//GEN-LAST:event_jButton5ActionPerformed
+
 	// Metodo auxiliares:
 	/**
 	 * Metodo Necesario para mostrar los documentos en el jTable1 sin este
@@ -509,22 +626,37 @@ public class principal extends javax.swing.JFrame {
 			VistaLista.setText(" > La cola está vacía."); // notifica si la cola esta vacia
 			return;
 		}
+		
 		//diseño: 
 		StringBuilder sb = new StringBuilder();
 		sb.append("========== COLA DE IMPRESIÓN ==========\n");
-		sb.append(String.format("%-20s | %-10s | %-10s\n", "Documento", "Prioridad", "Etiqueta"));
-		sb.append("---------------------------------------\n");
-		// agrega de manera de lista los procesos
+		sb.append("Tiempo actual: ").append(miReloj.getTiempoActual()).append("\n");
+		sb.append("Documentos en cola: ").append(MiMonticulo.getTamaño()).append("\n");
+		sb.append("==========================================\n");
+		sb.append(String.format("%-3s | %-20s | %-8s | %-10s | %-8s\n", 
+			"#", "Documento", "Usuario", "Prioridad", "Tamaño"));
+		sb.append("------------------------------------------\n");
+		
+		// agrega de manera de lista los procesos ordenados por prioridad
 		for (int i = 0; i < MiMonticulo.getTamaño(); i++) {
 			NodoDocumento doc = MiMonticulo.getNodo(i);
 			if (doc != null) {
-
-				sb.append(String.format("%-20s | %-10d | %-10d\n",
-					doc.getNombre(),
-					doc.getClaveOrdenacion(),
-					doc.getEtiquetaTiempo()));
+				String posicion = (i == 0) ? "*" + (i + 1) : " " + (i + 1);
+				String nombreTruncado = truncarNombre(doc.getNombre(), 18);
+				String usuarioTruncado = truncarNombre(doc.getNombreUsuario(), 7);
+				
+				sb.append(String.format("%-3s | %-20s | %-8s | %-10d | %-8d\n",
+					posicion,                    // Posición en la cola (con * para el primero)
+					nombreTruncado,              // Nombre del documento
+					usuarioTruncado,             // Usuario
+					doc.getClaveOrdenacion(),    // Prioridad calculada
+					doc.getTamaño()));            // Tamaño en páginas
 			}
 		}
+		
+		sb.append("\n==========================================\n");
+		sb.append("* = Siguiente documento a imprimir\n");
+		sb.append("Prioridad: menor valor = mayor prioridad");
 
 		VistaLista.setText(sb.toString());
 	}
@@ -549,13 +681,16 @@ public class principal extends javax.swing.JFrame {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("      === ESTRUCTURA JERÁRQUICA (MIN-HEAP) ===\n");
+		sb.append("==================================================\n");
+		sb.append("Tiempo actual: ").append(miReloj.getTiempoActual()).append("\n");
+		sb.append("Documentos en cola: ").append(n).append("\n");
 		sb.append("==================================================\n\n");
 
 		// Calculamos la altura del árbol
 		int altura = (int) (Math.log(n) / Math.log(2)) + 1;
 
 		// Variables para controlar el espaciado
-		int anchoNodo = 14; // Ancho fijo para "[nombre (P:X)]"
+		int anchoNodo = 16; // Ancho fijo para "[nombre (P:X)]"
 		int separation = 4; // Espacio mínimo entre hermanos
 
 		// El ancho del último nivel determina el espaciado base
@@ -590,6 +725,11 @@ public class principal extends javax.swing.JFrame {
 				String nombreTruncado = truncarNombre(doc.getNombre(), 7);
 				String textoNodo = "[" + nombreTruncado + " (P:" + doc.getClaveOrdenacion() + ")]";
 
+				// Resaltar la raíz (primer elemento) con un asterisco
+				if (indiceActual == 0) {
+					textoNodo = "*" + textoNodo + "*";
+				}
+
 				// Centrar el texto del nodo en el espacio de 'anchoNodo'
 				sb.append(centrarTexto(textoNodo, anchoNodo));
 
@@ -609,6 +749,11 @@ public class principal extends javax.swing.JFrame {
 			// El siguiente nivel tiene el doble de nodos
 			nodosEnNivel *= 2;
 		}
+
+		// Añadir leyenda al final
+		sb.append("\n==================================================\n");
+		sb.append("Leyenda: *nodo* = Siguiente documento a imprimir (raíz)\n");
+		sb.append("P:X = Prioridad calculada (menor = mayor prioridad)");
 
 		VistaArbol.setText(sb.toString());
 	}

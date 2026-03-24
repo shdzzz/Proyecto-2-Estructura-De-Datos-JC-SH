@@ -157,4 +157,19 @@ public class Usuario {
 		return primerDocumento;
 	}
 
+	/**
+	 * Obtiene una lista con todos los documentos del usuario.
+	 * 
+	 * @return Lista de todos los documentos
+	 */
+	public java.util.List<NodoDocumento> getDocumentos() {
+		java.util.List<NodoDocumento> documentos = new java.util.ArrayList<>();
+		NodoDocumento actual = primerDocumento;
+		while (actual != null) {
+			documentos.add(actual);
+			actual = actual.getSiguiente();
+		}
+		return documentos;
+	}
+
 }
