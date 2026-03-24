@@ -16,6 +16,8 @@ public class principal extends javax.swing.JFrame {
 
 	DefaultListModel<String> modeloUsuarios = new DefaultListModel<>();
 	TablaDispersion MiTablaHash = new TablaDispersion();
+	MonticuloBinario MiMonticulo = new MonticuloBinario();
+	RelojSimulacion miReloj = RelojSimulacion.getInstancia();
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(principal.class.getName());
 
 	/**
@@ -30,6 +32,7 @@ public class principal extends javax.swing.JFrame {
 		modeloTablaDocs.addColumn("Tipo");
 		modeloTablaDocs.addColumn("Estado"); // Para saber si está en cola o no 
 		jTable1.setModel(modeloTablaDocs);
+		miReloj.reiniciar();
 	}
 
 	/**
@@ -54,11 +57,13 @@ public class principal extends javax.swing.JFrame {
                 CrearDoc = new javax.swing.JButton();
                 EliminarDoc = new javax.swing.JButton();
                 MnadarImprimir = new javax.swing.JButton();
-                jCheckBox1 = new javax.swing.JCheckBox();
+                esPrioritario = new javax.swing.JCheckBox();
                 jPanel2 = new javax.swing.JPanel();
                 jTabbedPane1 = new javax.swing.JTabbedPane();
-                MostrarArbol = new javax.swing.JPanel();
-                VistaLista = new javax.swing.JPanel();
+                jScrollPane4 = new javax.swing.JScrollPane();
+                VistaArbol = new javax.swing.JTextArea();
+                jScrollPane3 = new javax.swing.JScrollPane();
+                VistaLista = new javax.swing.JTextArea();
                 jButton1 = new javax.swing.JButton();
                 jButton5 = new javax.swing.JButton();
 
@@ -139,7 +144,7 @@ public class principal extends javax.swing.JFrame {
                 MnadarImprimir.setText("Mandar a imprimir");
                 MnadarImprimir.addActionListener(this::MnadarImprimirActionPerformed);
 
-                jCheckBox1.setText("Es prioritario");
+                esPrioritario.setText("Es prioritario");
 
                 javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
                 jPanel1.setLayout(jPanel1Layout);
@@ -155,7 +160,7 @@ public class principal extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(MnadarImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jCheckBox1)
+                                .addComponent(esPrioritario)
                                 .addContainerGap(50, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -172,7 +177,7 @@ public class principal extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(EliminarDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(MnadarImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jCheckBox1))
+                                        .addComponent(esPrioritario))
                                 .addContainerGap())
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -185,35 +190,21 @@ public class principal extends javax.swing.JFrame {
 
                 jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Cola de Impresion"));
 
-                MostrarArbol.setBackground(new java.awt.Color(255, 255, 255));
+                VistaArbol.setEditable(false);
+                VistaArbol.setColumns(20);
+                VistaArbol.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
+                VistaArbol.setRows(5);
+                jScrollPane4.setViewportView(VistaArbol);
 
-                javax.swing.GroupLayout MostrarArbolLayout = new javax.swing.GroupLayout(MostrarArbol);
-                MostrarArbol.setLayout(MostrarArbolLayout);
-                MostrarArbolLayout.setHorizontalGroup(
-                        MostrarArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 588, Short.MAX_VALUE)
-                );
-                MostrarArbolLayout.setVerticalGroup(
-                        MostrarArbolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 158, Short.MAX_VALUE)
-                );
+                jTabbedPane1.addTab("Vista Arbol", jScrollPane4);
 
-                jTabbedPane1.addTab("Vista Arbol", MostrarArbol);
+                VistaLista.setEditable(false);
+                VistaLista.setColumns(20);
+                VistaLista.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
+                VistaLista.setRows(5);
+                jScrollPane3.setViewportView(VistaLista);
 
-                VistaLista.setBackground(new java.awt.Color(255, 255, 255));
-
-                javax.swing.GroupLayout VistaListaLayout = new javax.swing.GroupLayout(VistaLista);
-                VistaLista.setLayout(VistaListaLayout);
-                VistaListaLayout.setHorizontalGroup(
-                        VistaListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 588, Short.MAX_VALUE)
-                );
-                VistaListaLayout.setVerticalGroup(
-                        VistaListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 158, Short.MAX_VALUE)
-                );
-
-                jTabbedPane1.addTab("Vista Lista", VistaLista);
+                jTabbedPane1.addTab("Vista Lista", jScrollPane3);
 
                 jButton1.setText("Liberar Impresora");
 
@@ -237,8 +228,8 @@ public class principal extends javax.swing.JFrame {
                 jPanel2Layout.setVerticalGroup(
                         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                                .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jButton1)
                                         .addComponent(jButton5))
@@ -254,7 +245,8 @@ public class principal extends javax.swing.JFrame {
         }// </editor-fold>//GEN-END:initComponents
 	/**
 	 * Metodo espondable del funcionamiento del boton de eliminar Documento
-	 * utiliza el jTable1 para seleccionar el docuemnto y luego al darle al boton de "borrar doc" se borra.
+	 * utiliza el jTable1 para seleccionar el docuemnto y luego al darle al
+	 * boton de "borrar doc" se borra.
 	 */
         private void EliminarDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarDocActionPerformed
 		// TODO add your handling code here:
@@ -286,9 +278,58 @@ public class principal extends javax.swing.JFrame {
 			}
 		}
         }//GEN-LAST:event_EliminarDocActionPerformed
-
+	/**
+	 * Metodo responsable del funcionamiento del boton "Mandar a Imprimir"
+	 *
+	 * @param evt
+	 */
         private void MnadarImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MnadarImprimirActionPerformed
 		// TODO add your handling code here:
+		int fila = jTable1.getSelectedRow();
+		if (fila == -1) { // si el usuario no selecciono un documento en el JTable le sale ese mensaje.
+			JOptionPane.showMessageDialog(this, "Seleccione un documento de la tabla.");
+			return;
+		}
+
+		String nombreDoc = jTable1.getValueAt(fila, 0).toString();
+		String estado = jTable1.getValueAt(fila, 3).toString();
+
+		if (estado.equals("En Cola")) { // si el documento seleccionado ya existe dice que ya esta en cola
+			JOptionPane.showMessageDialog(this, "El documento ya está en la cola.");
+			return;
+		}
+
+		int idx = ListadeUsuarios.getSelectedIndex();
+		String nombreUser = modeloUsuarios.getElementAt(idx).split(" \\(")[0].trim();
+		Usuario user = MiTablaHash.buscarUsuario(nombreUser);
+
+		if (user != null) { // logica de buscar documento
+			NodoDocumento doc = user.buscarDocumentoPorNombre(nombreDoc);
+
+			if (doc != null) {
+
+				long tiempo = RelojSimulacion.getInstancia().obtenerTiempoYIncrementar(); // crea el tiempo y lo incrementa
+				doc.setEtiquetaTiempo(tiempo);
+
+				if (esPrioritario.isSelected()) {
+					// Si es prioritario, reducimos su clave para que salga antes.
+					doc.setClaveOrdenacion(tiempo / 2);
+				} else {
+					// Si es normal, su prioridad es el orden de llegada
+					doc.setClaveOrdenacion(tiempo);
+				}
+
+				if (MiMonticulo.insertar(doc)) { // logica de visualizacion y inserccion
+					doc.setEnCola(true);
+					actualizarTablaDocumentos(user);
+					actualizarVistaLista();
+					esPrioritario.setSelected(false);
+					actualizarVistaArbol();
+
+					JOptionPane.showMessageDialog(this, "Documento enviado a la cola con éxito.");
+				}
+			}
+		}
         }//GEN-LAST:event_MnadarImprimirActionPerformed
 
         private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarCSVActionPerformed
@@ -379,6 +420,7 @@ public class principal extends javax.swing.JFrame {
 			NodoDocumento nuevo = new NodoDocumento(nombreDoc, tamaño, tipoDoc, 0, false, nombreUsuario);
 			user.agregarDocumento(nuevo);
 			actualizarTablaDocumentos(user);
+
 			JOptionPane.showMessageDialog(this, "Documento '" + nombreDoc + "' agregado a la carpeta de " + nombreUsuario);
 		}
 
@@ -455,6 +497,155 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
+	 * Metodo responsabel de actualizar la vista de lista este metodo se
+	 * usara cada vez que el usario agrgue un documento a la cola de
+	 * impresion.
+	 */
+	public void actualizarVistaLista() {
+
+		VistaLista.setText("");
+
+		if (MiMonticulo.estaVacio()) {
+			VistaLista.setText(" > La cola está vacía."); // notifica si la cola esta vacia
+			return;
+		}
+		//diseño: 
+		StringBuilder sb = new StringBuilder();
+		sb.append("========== COLA DE IMPRESIÓN ==========\n");
+		sb.append(String.format("%-20s | %-10s | %-10s\n", "Documento", "Prioridad", "Etiqueta"));
+		sb.append("---------------------------------------\n");
+		// agrega de manera de lista los procesos
+		for (int i = 0; i < MiMonticulo.getTamaño(); i++) {
+			NodoDocumento doc = MiMonticulo.getNodo(i);
+			if (doc != null) {
+
+				sb.append(String.format("%-20s | %-10d | %-10d\n",
+					doc.getNombre(),
+					doc.getClaveOrdenacion(),
+					doc.getEtiquetaTiempo()));
+			}
+		}
+
+		VistaLista.setText(sb.toString());
+	}
+
+	/**
+	 * Metodo responsable de actualizar la vista de arbol este metodo se
+	 * aplicara cada vez que el usario agregue un documento a la cola de
+	 * impresion
+	 */
+	public void actualizarVistaArbol() {
+		VistaArbol.setText(""); // Limpiar JTextArea
+
+		// IMPORTANTE: Forzar fuente Monospaced por código si no lo hiciste en el diseño
+		VistaArbol.setFont(new java.awt.Font("Courier New", 0, 12));
+
+		int n = MiMonticulo.getTamaño();
+
+		if (n == 0) {
+			VistaArbol.setText("\n   [ La cola de impresión está vacía ]");
+			return;
+		}
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("      === ESTRUCTURA JERÁRQUICA (MIN-HEAP) ===\n");
+		sb.append("==================================================\n\n");
+
+		// Calculamos la altura del árbol
+		int altura = (int) (Math.log(n) / Math.log(2)) + 1;
+
+		// Variables para controlar el espaciado
+		int anchoNodo = 14; // Ancho fijo para "[nombre (P:X)]"
+		int separation = 4; // Espacio mínimo entre hermanos
+
+		// El ancho del último nivel determina el espaciado base
+		int maxNodosUltimoNivel = (int) Math.pow(2, altura - 1);
+		int anchoNivelBase = maxNodosUltimoNivel * (anchoNodo + separation);
+
+		// Margen izquierdo base para separar del borde del TextArea
+		String margenIzquierdoBase = "    ";
+
+		int indiceActual = 0;
+		int nodosEnNivel = 1;
+
+		for (int nivel = 0; nivel < altura; nivel++) {
+			// Añadir margen izquierdo base
+			sb.append(margenIzquierdoBase);
+
+			// Calcular el espaciado antes del primer nodo y entre nodos para este nivel
+			int espacioNivel = anchoNivelBase / nodosEnNivel;
+			int espacioInicial = (espacioNivel / 2) - (anchoNodo / 2);
+
+			// 1. Espacios iniciales del nivel (sangría de pirámide)
+			for (int e = 0; e < espacioInicial; e++) {
+				sb.append(" ");
+			}
+
+			// 2. Imprimir los nodos de este nivel
+			for (int i = 0; i < nodosEnNivel && indiceActual < n; i++) {
+				NodoDocumento doc = MiMonticulo.getNodo(indiceActual);
+
+				// Formatear el texto del nodo "[Nombre (P:X)]"
+				// Truncamos el nombre a 7 caracteres para que no desborde
+				String nombreTruncado = truncarNombre(doc.getNombre(), 7);
+				String textoNodo = "[" + nombreTruncado + " (P:" + doc.getClaveOrdenacion() + ")]";
+
+				// Centrar el texto del nodo en el espacio de 'anchoNodo'
+				sb.append(centrarTexto(textoNodo, anchoNodo));
+
+				// Espacio entre nodos del mismo nivel (hermanos y primos)
+				if (i < nodosEnNivel - 1) {
+					for (int e = 0; e < espacioNivel - anchoNodo; e++) {
+						sb.append(" ");
+					}
+				}
+
+				indiceActual++;
+			}
+
+			// 3. Salto de línea para el siguiente nivel
+			sb.append("\n\n");
+
+			// El siguiente nivel tiene el doble de nodos
+			nodosEnNivel *= 2;
+		}
+
+		VistaArbol.setText(sb.toString());
+	}
+
+	/**
+	 * Método auxiliar para centrar texto
+	 */
+	private String centrarTexto(String texto, int longitud) {
+		if (texto.length() >= longitud) {
+			return texto.substring(0, longitud);
+		}
+		int espaciosTotal = longitud - texto.length();
+		int espaciosIzq = espaciosTotal / 2;
+		int espaciosDer = espaciosTotal - espaciosIzq;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < espaciosIzq; i++) {
+			sb.append(" ");
+		}
+		sb.append(texto);
+		for (int i = 0; i < espaciosDer; i++) {
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Método auxiliar para truncar nombres largos
+	 */
+	private String truncarNombre(String nombre, int longitudMax) {
+		if (nombre.length() > longitudMax) {
+			return nombre.substring(0, longitudMax - 1) + ".";
+		}
+		return nombre;
+	}
+
+	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String args[]) {
@@ -487,17 +678,19 @@ public class principal extends javax.swing.JFrame {
         private javax.swing.JButton EliminarUsuarios;
         private javax.swing.JList<String> ListadeUsuarios;
         private javax.swing.JButton MnadarImprimir;
-        private javax.swing.JPanel MostrarArbol;
-        private javax.swing.JPanel VistaLista;
+        private javax.swing.JTextArea VistaArbol;
+        private javax.swing.JTextArea VistaLista;
+        private javax.swing.JCheckBox esPrioritario;
         private javax.swing.JButton jButton1;
         private javax.swing.JButton jButton5;
         private javax.swing.JButton jButton6;
-        private javax.swing.JCheckBox jCheckBox1;
         private javax.swing.JPanel jPanel1;
         private javax.swing.JPanel jPanel2;
         private javax.swing.JPanel jPanel3;
         private javax.swing.JScrollPane jScrollPane1;
         private javax.swing.JScrollPane jScrollPane2;
+        private javax.swing.JScrollPane jScrollPane3;
+        private javax.swing.JScrollPane jScrollPane4;
         private javax.swing.JTabbedPane jTabbedPane1;
         private javax.swing.JTable jTable1;
         // End of variables declaration//GEN-END:variables

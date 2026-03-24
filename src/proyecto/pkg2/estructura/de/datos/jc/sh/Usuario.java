@@ -98,12 +98,15 @@ public class Usuario {
 			aux.setSiguiente(nuevo);
 		}
 	}
+
 	/**
-	 * Metodo responsable de eliminar un documento QUE NO ESTE EN COLA DE IMPRESION
-	 * es boolean para saber el estado, osea, si se elimino con exito es true
-	 * si no es false (puede ser false o porque no existe o porque esta en cola de impresion).
+	 * Metodo responsable de eliminar un documento QUE NO ESTE EN COLA DE
+	 * IMPRESION es boolean para saber el estado, osea, si se elimino con
+	 * exito es true si no es false (puede ser false o porque no existe o
+	 * porque esta en cola de impresion).
+	 *
 	 * @param nombreDoc el nombre del documento a borrar.
-	 * @return 
+	 * @return
 	 */
 	public boolean eliminarDocumentoDeLista(String nombreDoc) {
 		if (primerDocumento == null) {
@@ -111,11 +114,11 @@ public class Usuario {
 		}
 
 		if (primerDocumento.getNombre().equals(nombreDoc)) {
-			if (!primerDocumento.isEnCola()) { 
+			if (!primerDocumento.isEnCola()) {
 				primerDocumento = primerDocumento.getSiguiente();
 				return true;
 			} else {
-				return false; 
+				return false;
 			}
 		}
 
@@ -134,6 +137,20 @@ public class Usuario {
 			actual = actual.getSiguiente();
 		}
 		return false;
+	}
+	/**
+	 * Metodo responsable de buscar un documento por su nombre
+	 * @param nombre es el nombre del documento que se quiere buscar
+	 */
+	public NodoDocumento buscarDocumentoPorNombre(String nombre) {
+		NodoDocumento actual = primerDocumento;
+		while (actual != null) { // recorrido hasta encontrar el documento "nombre"
+			if (actual.getNombre().equals(nombre)) {
+				return actual;
+			}
+			actual = actual.getSiguiente();
+		}
+		return null; // retorna null si no existe
 	}
 
 	public NodoDocumento getPrimerDoc() {
