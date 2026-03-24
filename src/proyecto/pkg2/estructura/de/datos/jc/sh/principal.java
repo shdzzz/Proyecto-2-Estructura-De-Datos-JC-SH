@@ -252,9 +252,39 @@ public class principal extends javax.swing.JFrame {
 
                 pack();
         }// </editor-fold>//GEN-END:initComponents
-
+	/**
+	 * Metodo espondable del funcionamiento del boton de eliminar Documento
+	 * utiliza el jTable1 para seleccionar el docuemnto y luego al darle al boton de "borrar doc" se borra.
+	 */
         private void EliminarDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarDocActionPerformed
 		// TODO add your handling code here:
+		int fila = jTable1.getSelectedRow();
+		if (fila == -1) { // en caso de no seleccionar en la lista sale este mensaje
+			JOptionPane.showMessageDialog(this, "Seleccione un documento de la tabla.");
+			return;
+		}
+		// logica en caso de que el documento este en cola de impresion
+		String nombreDoc = jTable1.getValueAt(fila, 0).toString();
+		String estado = jTable1.getValueAt(fila, 3).toString();
+		if (estado.equals("En Cola")) {
+			JOptionPane.showMessageDialog(this, "No puede eliminar un documento que ya está en la cola de impresión desde aquí.\nUse la función 'Cancelar en cola'.");
+			return;
+		}
+		// logica de eliminacion
+		int userIndice = ListadeUsuarios.getSelectedIndex();
+		String item = modeloUsuarios.getElementAt(userIndice);
+		String nombreUser = item.split(" \\(")[0].trim();
+		Usuario user = MiTablaHash.buscarUsuario(nombreUser);
+
+		if (user != null) {
+			int confirmar = JOptionPane.showConfirmDialog(this, "¿Seguro que desea eliminar '" + nombreDoc + "'?");
+			if (confirmar == JOptionPane.YES_OPTION) {
+				if (user.eliminarDocumentoDeLista(nombreDoc)) {
+					actualizarTablaDocumentos(user); // Refrescar la tabla visual
+					JOptionPane.showMessageDialog(this, "Documento eliminado.");
+				}
+			}
+		}
         }//GEN-LAST:event_EliminarDocActionPerformed
 
         private void MnadarImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MnadarImprimirActionPerformed
@@ -394,10 +424,10 @@ public class principal extends javax.swing.JFrame {
         }//GEN-LAST:event_ListadeUsuariosValueChanged
 
 	// Metodo auxiliares:
-	
 	/**
-	 * Metodo Necesario para mostrar los documentos en el jTable1
-	 * sin este solo se guardaria el documento en memoria
+	 * Metodo Necesario para mostrar los documentos en el jTable1 sin este
+	 * solo se guardaria el documento en memoria
+	 *
 	 * @param user por cada usuario tiene sus documentos
 	 */
 	public void actualizarTablaDocumentos(Usuario user) {
@@ -414,10 +444,10 @@ public class principal extends javax.swing.JFrame {
 			String estado = actual.isEnCola() ? "En Cola" : "Pendiente";
 
 			modelo.addRow(new Object[]{
-				actual.getNombre(), 
-				actual.getTamaño(), 
-				actual.getTipo(), 
-				estado 
+				actual.getNombre(),
+				actual.getTamaño(),
+				actual.getTipo(),
+				estado
 			});
 
 			actual = actual.getSiguiente();
