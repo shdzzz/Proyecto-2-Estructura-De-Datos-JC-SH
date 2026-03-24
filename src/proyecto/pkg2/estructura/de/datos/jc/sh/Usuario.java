@@ -9,23 +9,49 @@ public class Usuario {
     private String nombre;
     private String tipo;
     
+    /**
+     * Constructor para crear un nuevo usuario.
+     * 
+     * @param nombre Nombre del usuario
+     * @param tipo Tipo de prioridad del usuario
+     */
     public Usuario(String nombre, String tipo) {
         this.nombre = nombre;
         this.tipo = tipo;
     }
     
+    /**
+     * Obtiene el nombre del usuario.
+     * 
+     * @return Nombre del usuario
+     */
     public String getNombre() {
         return nombre;
     }
     
+    /**
+     * Establece el nombre del usuario.
+     * 
+     * @param nombre Nuevo nombre del usuario
+     */
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
     
+    /**
+     * Obtiene el tipo de prioridad del usuario.
+     * 
+     * @return Tipo de prioridad
+     */
     public String getTipo() {
         return tipo;
     }
     
+    /**
+     * Establece el tipo de prioridad del usuario.
+     * 
+     * @param tipo Nuevo tipo de prioridad
+     */
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }

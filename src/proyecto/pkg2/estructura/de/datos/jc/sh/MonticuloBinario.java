@@ -10,6 +10,9 @@ public class MonticuloBinario {
     private int tamaño;
     private int capacidad;
     
+    /**
+     * Constructor que crea un montículo con capacidad inicial de 100.
+     */
     public MonticuloBinario() {
         this.capacidad = 100;
         this.monticulo = new NodoDocumento[capacidad];
@@ -18,7 +21,7 @@ public class MonticuloBinario {
     
     /**
      * Inserta un documento en la cola de prioridad.
-     * Usa prioridadCalculada como criterio principal, etiquetaTiempo como desempate.
+     * Usa claveOrdenacion como criterio principal, etiquetaTiempo como desempate.
      * 
      * @param doc Documento a insertar
      * @return true si se insertó correctamente, false si está lleno
@@ -30,15 +33,16 @@ public class MonticuloBinario {
         
         monticulo[tamaño] = doc;
         doc.setIndiceEnMonticulo(tamaño);
+        doc.setEnCola(true);
         
         int actual = tamaño;
         while (actual > 0) {
             int padre = (actual - 1) / 2;
             
-            // Comparar por prioridadCalculada, usar etiquetaTiempo como desempate
-            if (monticulo[actual].getPrioridadCalculada() > monticulo[padre].getPrioridadCalculada()) {
+            // Comparar por claveOrdenacion, usar etiquetaTiempo como desempate
+            if (monticulo[actual].getClaveOrdenacion() > monticulo[padre].getClaveOrdenacion()) {
                 break;
-            } else if (monticulo[actual].getPrioridadCalculada() == monticulo[padre].getPrioridadCalculada()) {
+            } else if (monticulo[actual].getClaveOrdenacion() == monticulo[padre].getClaveOrdenacion()) {
                 if (monticulo[actual].getEtiquetaTiempo() >= monticulo[padre].getEtiquetaTiempo()) {
                     break;
                 }
@@ -60,7 +64,7 @@ public class MonticuloBinario {
     
     /**
      * Elimina el documento con mayor prioridad (menor valor).
-     * Usa prioridadCalculada como criterio principal, etiquetaTiempo como desempate.
+     * Usa claveOrdenacion como criterio principal, etiquetaTiempo como desempate.
      * 
      * @return Documento eliminado, null si está vacío
      */
@@ -71,6 +75,7 @@ public class MonticuloBinario {
         
         NodoDocumento minimo = monticulo[0];
         minimo.setIndiceEnMonticulo(-1);
+        minimo.setEnCola(false);
         
         tamaño--;
         if (tamaño > 0) {
@@ -85,9 +90,9 @@ public class MonticuloBinario {
                 
                 // Comparar con hijo izquierdo
                 if (izquierdo < tamaño) {
-                    if (monticulo[izquierdo].getPrioridadCalculada() < monticulo[menor].getPrioridadCalculada()) {
+                    if (monticulo[izquierdo].getClaveOrdenacion() < monticulo[menor].getClaveOrdenacion()) {
                         menor = izquierdo;
-                    } else if (monticulo[izquierdo].getPrioridadCalculada() == monticulo[menor].getPrioridadCalculada()) {
+                    } else if (monticulo[izquierdo].getClaveOrdenacion() == monticulo[menor].getClaveOrdenacion()) {
                         if (monticulo[izquierdo].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
                             menor = izquierdo;
                         }
@@ -96,9 +101,9 @@ public class MonticuloBinario {
                 
                 // Comparar con hijo derecho
                 if (derecho < tamaño) {
-                    if (monticulo[derecho].getPrioridadCalculada() < monticulo[menor].getPrioridadCalculada()) {
+                    if (monticulo[derecho].getClaveOrdenacion() < monticulo[menor].getClaveOrdenacion()) {
                         menor = derecho;
-                    } else if (monticulo[derecho].getPrioridadCalculada() == monticulo[menor].getPrioridadCalculada()) {
+                    } else if (monticulo[derecho].getClaveOrdenacion() == monticulo[menor].getClaveOrdenacion()) {
                         if (monticulo[derecho].getEtiquetaTiempo() < monticulo[menor].getEtiquetaTiempo()) {
                             menor = derecho;
                         }
@@ -123,18 +128,81 @@ public class MonticuloBinario {
         return minimo;
     }
     
+    /**
+     * Verifica si el montículo está vacío.
+     * 
+     * @return true si está vacío, false en caso contrario
+     */
     public boolean estaVacio() {
         return tamaño == 0;
     }
     
+    /**
+     * Obtiene el número de elementos en el montículo.
+     * 
+     * @return Tamaño actual del montículo
+     */
     public int getTamaño() {
         return tamaño;
     }
     
+    /**
+     * Obtiene el documento con mayor prioridad sin eliminarlo.
+     * 
+     * @return Documento en la raíz, null si está vacío
+     */
     public NodoDocumento verMinimo() {
         if (tamaño == 0) {
             return null;
         }
         return monticulo[0];
+    }
+    
+    /**
+     * Elimina un documento específico del montículo.
+     * Cambia su clave a Long.MIN_VALUE, lo sube a la raíz y llama a eliminar_min().
+     * 
+     * @param doc Documento a eliminar
+     * @return true si se eliminó correctamente, false si no está en el montículo
+     */
+    public boolean eliminarDocumento(NodoDocumento doc) {
+        if (doc.getIndiceEnMonticulo() == -1 || !doc.isEnCola()) {
+            return false; // No está en el montículo
+        }
+        
+        int indice = doc.getIndiceEnMonticulo();
+        
+        // Cambiar clave a valor mínimo para que vaya a la raíz
+        long claveOriginal = doc.getClaveOrdenacion();
+        doc.setClaveOrdenacion(Long.MIN_VALUE);
+        
+        // Flotar hasta la raíz
+        while (indice > 0) {
+            int padre = (indice - 1) / 2;
+            
+            if (monticulo[indice].getClaveOrdenacion() >= monticulo[padre].getClaveOrdenacion()) {
+                break;
+            }
+            
+            // Intercambiar con el padre
+            NodoDocumento temp = monticulo[indice];
+            monticulo[indice] = monticulo[padre];
+            monticulo[padre] = temp;
+            
+            monticulo[indice].setIndiceEnMonticulo(indice);
+            monticulo[padre].setIndiceEnMonticulo(padre);
+            
+            indice = padre;
+        }
+        
+        // Eliminar el mínimo (que ahora es nuestro documento)
+        NodoDocumento eliminado = eliminar_min();
+        
+        // Restaurar clave original (opcional, ya que se va a eliminar)
+        if (eliminado != null) {
+            eliminado.setClaveOrdenacion(claveOriginal);
+        }
+        
+        return true;
     }
 }

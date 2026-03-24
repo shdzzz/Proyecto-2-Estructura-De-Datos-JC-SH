@@ -10,6 +10,9 @@ public class TablaDispersion {
     private int capacidad;
     private int tamaño;
     
+    /**
+     * Constructor que crea una tabla hash con capacidad inicial de 16.
+     */
     public TablaDispersion() {
         this.capacidad = 16;
         this.tabla = new ListaEnlazada[capacidad];
@@ -39,19 +42,12 @@ public class TablaDispersion {
         tamaño++;
     }
     
-    public boolean eliminarUsuarioHash(String nombreUsuario) {
-        int indice = funcionHash(nombreUsuario);
-        
-        // Verificamos si la cubeta tiene algo
-        if (!tabla[indice].estaVacia()) {
-            // Para ser exactos, reseteamos la lista de ese índice
-            tabla[indice] = new ListaEnlazada(); 
-            tamaño--;
-            return true;
-        }
-        return false;
-    }
-    
+    /**
+     * Busca un usuario por su nombre.
+     * 
+     * @param nombre Nombre del usuario a buscar
+     * @return Lista enlazada con el usuario, null si no existe
+     */
     public ListaEnlazada buscarUsuario(String nombre) {
         int indice = funcionHash(nombre);
         if (tabla[indice].estaVacia()) {
@@ -60,6 +56,12 @@ public class TablaDispersion {
         return tabla[indice];
     }
     
+    /**
+     * Elimina un usuario de la tabla hash.
+     * 
+     * @param nombre Nombre del usuario a eliminar
+     * @return true si se eliminó correctamente, false en caso contrario
+     */
     public boolean eliminarUsuario(String nombre) {
         int indice = funcionHash(nombre);
         ListaEnlazada cubeta = tabla[indice];
@@ -73,14 +75,30 @@ public class TablaDispersion {
         return eliminado;
     }
     
+    /**
+     * Verifica si un usuario existe en la tabla.
+     * 
+     * @param nombre Nombre del usuario a verificar
+     * @return true si existe, false en caso contrario
+     */
     public boolean existeUsuario(String nombre) {
         return !tabla[funcionHash(nombre)].estaVacia();
     }
     
+    /**
+     * Obtiene el número de usuarios en la tabla.
+     * 
+     * @return Número de usuarios almacenados
+     */
     public int getTamaño() {
         return tamaño;
     }
     
+    /**
+     * Obtiene la capacidad actual de la tabla.
+     * 
+     * @return Capacidad máxima de la tabla
+     */
     public int getCapacidad() {
         return capacidad;
     }
