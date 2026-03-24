@@ -18,6 +18,7 @@ public class principal extends javax.swing.JFrame {
 	TablaDispersion MiTablaHash = new TablaDispersion();
 	MonticuloBinario MiMonticulo = new MonticuloBinario();
 	RelojSimulacion miReloj = RelojSimulacion.getInstancia();
+	private ManejoDeArchivos manejadorArchivos = new ManejoDeArchivos();
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(principal.class.getName());
 
 	/**
@@ -33,6 +34,17 @@ public class principal extends javax.swing.JFrame {
 		modeloTablaDocs.addColumn("Estado"); // Para saber si está en cola o no 
 		jTable1.setModel(modeloTablaDocs);
 		miReloj.reiniciar();
+		/**
+		 * Estas lineas son necesarias para que, cuando el usuario cierre el programa en donde esta la X, le pregunte si quiere guardar, o no el documento
+		 */
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		this.addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent evt) {
+				cerrarAplicacion();
+			}
+		});
 	}
 
 	/**
@@ -64,8 +76,8 @@ public class principal extends javax.swing.JFrame {
                 VistaArbol = new javax.swing.JTextArea();
                 jScrollPane3 = new javax.swing.JScrollPane();
                 VistaLista = new javax.swing.JTextArea();
-                jButton1 = new javax.swing.JButton();
-                jButton5 = new javax.swing.JButton();
+                LibrerarImpresora = new javax.swing.JButton();
+                CancelarCola = new javax.swing.JButton();
 
                 jButton6.setText("jButton6");
 
@@ -146,9 +158,6 @@ public class principal extends javax.swing.JFrame {
 
                 esPrioritario.setText("Es prioritario");
 
-                jButton1.addActionListener(this::jButton1ActionPerformed);
-                jButton5.addActionListener(this::jButton5ActionPerformed);
-
                 javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
                 jPanel1.setLayout(jPanel1Layout);
                 jPanel1Layout.setHorizontalGroup(
@@ -195,7 +204,7 @@ public class principal extends javax.swing.JFrame {
 
                 VistaArbol.setEditable(false);
                 VistaArbol.setColumns(20);
-                VistaArbol.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
+                VistaArbol.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
                 VistaArbol.setRows(5);
                 jScrollPane4.setViewportView(VistaArbol);
 
@@ -203,15 +212,17 @@ public class principal extends javax.swing.JFrame {
 
                 VistaLista.setEditable(false);
                 VistaLista.setColumns(20);
-                VistaLista.setFont(new java.awt.Font("Monospaced", 0, 10)); // NOI18N
+                VistaLista.setFont(new java.awt.Font("Monospaced", 0, 11)); // NOI18N
                 VistaLista.setRows(5);
                 jScrollPane3.setViewportView(VistaLista);
 
                 jTabbedPane1.addTab("Vista Lista", jScrollPane3);
 
-                jButton1.setText("Liberar Impresora");
+                LibrerarImpresora.setText("Liberar Impresora");
+                LibrerarImpresora.addActionListener(this::LibrerarImpresoraActionPerformed);
 
-                jButton5.setText("Cancelar en cola");
+                CancelarCola.setText("Cancelar en cola");
+                CancelarCola.addActionListener(this::CancelarColaActionPerformed);
 
                 javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
                 jPanel2.setLayout(jPanel2Layout);
@@ -222,9 +233,9 @@ public class principal extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jTabbedPane1)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(LibrerarImpresora, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(CancelarCola, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(10, 10, 10)))
                                 .addContainerGap())
                 );
@@ -234,8 +245,8 @@ public class principal extends javax.swing.JFrame {
                                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jButton1)
-                                        .addComponent(jButton5))
+                                        .addComponent(LibrerarImpresora)
+                                        .addComponent(CancelarCola))
                                 .addGap(15, 15, 15))
                 );
 
@@ -283,13 +294,11 @@ public class principal extends javax.swing.JFrame {
         }//GEN-LAST:event_EliminarDocActionPerformed
 	/**
 	 * Metodo responsable del funcionamiento del boton "Mandar a Imprimir"
-	 *
-	 * @param evt
 	 */
         private void MnadarImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MnadarImprimirActionPerformed
 		// TODO add your handling code here:
 		int fila = jTable1.getSelectedRow();
-		if (fila == -1) { // si el usuario no selecciono un documento en el JTable le sale ese mensaje.
+		if (fila == -1) {
 			JOptionPane.showMessageDialog(this, "Seleccione un documento de la tabla.");
 			return;
 		}
@@ -297,7 +306,7 @@ public class principal extends javax.swing.JFrame {
 		String nombreDoc = jTable1.getValueAt(fila, 0).toString();
 		String estado = jTable1.getValueAt(fila, 3).toString();
 
-		if (estado.equals("En Cola")) { // si el documento seleccionado ya existe dice que ya esta en cola
+		if (estado.equals("En Cola")) {
 			JOptionPane.showMessageDialog(this, "El documento ya está en la cola.");
 			return;
 		}
@@ -306,39 +315,34 @@ public class principal extends javax.swing.JFrame {
 		String nombreUser = modeloUsuarios.getElementAt(idx).split(" \\(")[0].trim();
 		Usuario user = MiTablaHash.buscarUsuario(nombreUser);
 
-		if (user != null) { // logica de buscar documento
+		if (user != null) {
 			NodoDocumento doc = user.buscarDocumentoPorNombre(nombreDoc);
-
 			if (doc != null) {
-
-				long tiempo = RelojSimulacion.getInstancia().obtenerTiempoYIncrementar(); // crea el tiempo y lo incrementa
+				long tiempo = RelojSimulacion.getInstancia().obtenerTiempoYIncrementar();
 				doc.setEtiquetaTiempo(tiempo);
-
-				if (esPrioritario.isSelected()) {
-					// Si es prioritario, reducimos su clave para que salga antes.
-					doc.setClaveOrdenacion(tiempo / 2);
-				} else {
-					// Si es normal, su prioridad es el orden de llegada
-					doc.setClaveOrdenacion(tiempo);
-				}
-
-				if (MiMonticulo.insertar(doc)) { // logica de visualizacion y inserccion
+				doc.setEsPrioritario(esPrioritario.isSelected());
+				int prioridadUsuario = user.getPrioridad();
+				
+				doc.calcularClaveOrdenacion(prioridadUsuario);
+				
+				doc.setNombreUsuario(null);
+				if (MiMonticulo.insertar(doc)) {
 					doc.setEnCola(true);
 					actualizarTablaDocumentos(user);
 					actualizarVistaLista();
-					esPrioritario.setSelected(false);
 					actualizarVistaArbol();
-
+					esPrioritario.setSelected(false);
 					JOptionPane.showMessageDialog(this, "Documento enviado a la cola con éxito.");
 				}
 			}
 		}
         }//GEN-LAST:event_MnadarImprimirActionPerformed
-
+	/**
+	 * Metodo responsable de cargar el archivo CSV, usando metodos de la clase Manejo de archivos
+	 */
         private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarCSVActionPerformed
 		// TODO add your handling code here:
-		ManejoDeArchivos manejador = new ManejoDeArchivos();
-		String[][] datosUsuarios = manejador.cargarUsuarios(this);
+		String[][] datosUsuarios = manejadorArchivos.cargarUsuarios(this);
 		if (datosUsuarios != null) {
 			for (int i = 0; i < datosUsuarios.length; i++) {
 				String nombre = datosUsuarios[i][0];
@@ -349,14 +353,16 @@ public class principal extends javax.swing.JFrame {
 			}
 			JOptionPane.showMessageDialog(this, "se cargaron " + datosUsuarios.length + " usuarios exitosamente.", "Carga completa", JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			String Error = manejador.getUltimoError();
+			String Error = manejadorArchivos.getUltimoError();
 
 			if (!Error.equals("Carga cancelada por el usuario.")) {
 				JOptionPane.showMessageDialog(this, Error, "Error de formato", JOptionPane.ERROR_MESSAGE);
 			}
 		}
         }//GEN-LAST:event_CargarCSVActionPerformed
-
+	/**
+	 * Metodo responsable del funcionamiento del boton de agregar usuario
+	 */
         private void AgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarUsuarioActionPerformed
 		// TODO add your handling code here:
 		String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo usuario: ", "Nuevo Usuario", JOptionPane.QUESTION_MESSAGE);
@@ -391,7 +397,10 @@ public class principal extends javax.swing.JFrame {
 			}
 		}
         }//GEN-LAST:event_AgregarUsuarioActionPerformed
-
+	/**
+	 * Metodo responsable del funcionamiento del boton de crearDocumento
+	 * @param evt 
+	 */
         private void CrearDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearDocActionPerformed
 		// TODO add your handling code here:
 		int seleccionado = ListadeUsuarios.getSelectedIndex();
@@ -428,7 +437,9 @@ public class principal extends javax.swing.JFrame {
 		}
 
         }//GEN-LAST:event_CrearDocActionPerformed
-
+	/**
+	 * Metodo responsable del funcionamiento del boton de eliminar Usuarios 
+	 */
         private void EliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarUsuariosActionPerformed
 		// TODO add your handling code here:
 		int indiceSeleccionado = ListadeUsuarios.getSelectedIndex();
@@ -454,7 +465,10 @@ public class principal extends javax.swing.JFrame {
 			}
 		}
         }//GEN-LAST:event_EliminarUsuariosActionPerformed
-
+	/**
+	 * Metodo responsable del funcionamiento de la lista de usuarios
+	 * esto ayuda a que cuando se agregue un usuario este aparezca en el JList
+	 */
         private void ListadeUsuariosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ListadeUsuariosValueChanged
 		// TODO add your handling code here:
 		if (!evt.getValueIsAdjusting()) {
@@ -467,61 +481,65 @@ public class principal extends javax.swing.JFrame {
 			}
 		}
         }//GEN-LAST:event_ListadeUsuariosValueChanged
-
-        private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+	/**
+	 * Metodo responsable del funcionamiento del boton de liberar impresora (Imprime)
+	 */
+        private void LibrerarImpresoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LibrerarImpresoraActionPerformed
 		// Liberar Impresora - Eliminar el documento con mayor prioridad
 		if (MiMonticulo.estaVacio()) {
 			JOptionPane.showMessageDialog(this, "No hay documentos en la cola de impresión.", "Cola Vacía", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		
+
 		NodoDocumento docImpreso = MiMonticulo.eliminar_min();
 		if (docImpreso != null) {
 			// Incrementar el tiempo del reloj
 			miReloj.incrementarTiempo();
-			
+
 			// Actualizar vistas
 			actualizarVistaLista();
 			actualizarVistaArbol();
-			
+
 			// Actualizar la tabla del usuario correspondiente
 			String nombreUsuario = docImpreso.getNombreUsuario();
 			Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
 			if (user != null) {
 				actualizarTablaDocumentos(user);
 			}
-			
-			JOptionPane.showMessageDialog(this, 
-				"Documento impreso: " + docImpreso.getNombre() + 
-				"\nUsuario: " + docImpreso.getNombreUsuario() + 
-				"\nTamaño: " + docImpreso.getTamaño() + " páginas" +
-				"\nTiempo actual: " + miReloj.getTiempoActual(), 
+
+			JOptionPane.showMessageDialog(this,
+				"Documento impreso: " + docImpreso.getNombre()
+				+ "\nUsuario: " + docImpreso.getNombreUsuario()
+				+ "\nTamaño: " + docImpreso.getTamaño() + " páginas"
+				+ "\nTiempo actual: " + miReloj.getTiempoActual(),
 				"Impresión Completada", JOptionPane.INFORMATION_MESSAGE);
 		}
-        }//GEN-LAST:event_jButton1ActionPerformed
-
-        private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        }//GEN-LAST:event_LibrerarImpresoraActionPerformed
+	/**
+	 * Metodo responsable del funcionamiento del boton decancelar la cola
+	 */
+        private void CancelarColaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarColaActionPerformed
 		// Cancelar en cola - Eliminar un documento específico de la cola
 		if (MiMonticulo.estaVacio()) {
 			JOptionPane.showMessageDialog(this, "No hay documentos en la cola de impresión.", "Cola Vacía", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		
+
 		// Obtener el usuario seleccionado
 		int idxUsuario = ListadeUsuarios.getSelectedIndex();
 		if (idxUsuario == -1) {
 			JOptionPane.showMessageDialog(this, "Seleccione un usuario de la lista.", "Seleccione Usuario", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-		
+
 		String nombreUser = modeloUsuarios.getElementAt(idxUsuario).split(" \\(")[0].trim();
 		Usuario user = MiTablaHash.buscarUsuario(nombreUser);
-		
+
 		if (user == null) {
 			JOptionPane.showMessageDialog(this, "Usuario no encontrado.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		// Obtener documentos del usuario que están en cola
 		java.util.List<NodoDocumento> docsEnCola = new java.util.ArrayList<>();
 		for (NodoDocumento doc : user.getDocumentos()) {
@@ -529,27 +547,27 @@ public class principal extends javax.swing.JFrame {
 				docsEnCola.add(doc);
 			}
 		}
-		
+
 		if (docsEnCola.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "El usuario seleccionado no tiene documentos en cola.", "Sin Documentos en Cola", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		
+
 		// Crear lista de opciones para el usuario
 		String[] opciones = new String[docsEnCola.size()];
 		for (int i = 0; i < docsEnCola.size(); i++) {
 			NodoDocumento doc = docsEnCola.get(i);
 			opciones[i] = doc.getNombre() + " (" + doc.getTamaño() + " págs)";
 		}
-		
-		String seleccion = (String) JOptionPane.showInputDialog(this, 
+
+		String seleccion = (String) JOptionPane.showInputDialog(this,
 			"Seleccione el documento a cancelar:",
 			"Cancelar Documento en Cola",
 			JOptionPane.QUESTION_MESSAGE,
 			null,
 			opciones,
 			opciones[0]);
-		
+
 		if (seleccion != null) {
 			// Encontrar el documento seleccionado
 			NodoDocumento docACancelar = null;
@@ -559,28 +577,33 @@ public class principal extends javax.swing.JFrame {
 					break;
 				}
 			}
-			
+
 			if (docACancelar != null) {
 				// Eliminar del montículo
 				if (MiMonticulo.eliminarDocumento(docACancelar)) {
 					// Incrementar el tiempo del reloj
 					miReloj.incrementarTiempo();
-					
+
 					// Actualizar vistas
 					actualizarVistaLista();
 					actualizarVistaArbol();
 					actualizarTablaDocumentos(user);
-					
-					JOptionPane.showMessageDialog(this, 
-						"Documento cancelado: " + docACancelar.getNombre() + 
-						"\nTiempo actual: " + miReloj.getTiempoActual(), 
+
+					JOptionPane.showMessageDialog(this,
+						"Documento cancelado: " + docACancelar.getNombre()
+						+ "\nTiempo actual: " + miReloj.getTiempoActual(),
 						"Cancelación Completada", JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					JOptionPane.showMessageDialog(this, "Error al cancelar el documento.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
-        }//GEN-LAST:event_jButton5ActionPerformed
+        }//GEN-LAST:event_CancelarColaActionPerformed
+
+        private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarEnColaActionPerformed
+                // TODO add your handling code here:
+		// no deja borrar este metodo, esta bug
+        }//GEN-LAST:event_CancelarEnColaActionPerformed
 
 	// Metodo auxiliares:
 	/**
@@ -613,6 +636,28 @@ public class principal extends javax.swing.JFrame {
 		}
 	}
 
+	private String[][] recolectarDatos() {
+
+		javax.swing.ListModel modelo = ListadeUsuarios.getModel();
+		int cantidad = modelo.getSize();
+		String[][] matriz = new String[cantidad][2];
+		for (int i = 0; i < cantidad; i++) {
+			String textoFila = modelo.getElementAt(i).toString();
+			int posicionParentesis = textoFila.indexOf(" (");
+
+			if (posicionParentesis != -1) {
+				matriz[i][0] = textoFila.substring(0, posicionParentesis).trim();
+				String tipo = textoFila.substring(posicionParentesis + 2);
+				matriz[i][1] = tipo.replace(")", "").trim();
+			} else {
+				matriz[i][0] = textoFila.trim();
+				matriz[i][1] = "normal";
+			}
+		}
+
+		return matriz;
+	}
+
 	/**
 	 * Metodo responsabel de actualizar la vista de lista este metodo se
 	 * usara cada vez que el usario agrgue un documento a la cola de
@@ -626,34 +671,35 @@ public class principal extends javax.swing.JFrame {
 			VistaLista.setText(" > La cola está vacía."); // notifica si la cola esta vacia
 			return;
 		}
-		
+
 		//diseño: 
 		StringBuilder sb = new StringBuilder();
 		sb.append("========== COLA DE IMPRESIÓN ==========\n");
 		sb.append("Tiempo actual: ").append(miReloj.getTiempoActual()).append("\n");
 		sb.append("Documentos en cola: ").append(MiMonticulo.getTamaño()).append("\n");
 		sb.append("==========================================\n");
-		sb.append(String.format("%-3s | %-20s | %-8s | %-10s | %-8s\n", 
+		sb.append(String.format("%-3s | %-20s | %-8s | %-10s | %-8s\n",
 			"#", "Documento", "Usuario", "Prioridad", "Tamaño"));
 		sb.append("------------------------------------------\n");
-		
+
 		// agrega de manera de lista los procesos ordenados por prioridad
 		for (int i = 0; i < MiMonticulo.getTamaño(); i++) {
 			NodoDocumento doc = MiMonticulo.getNodo(i);
 			if (doc != null) {
 				String posicion = (i == 0) ? "*" + (i + 1) : " " + (i + 1);
 				String nombreTruncado = truncarNombre(doc.getNombre(), 18);
-				String usuarioTruncado = truncarNombre(doc.getNombreUsuario(), 7);
-				
+				String nombreUsuario = (doc.getNombreUsuario() == null) ? "---" : doc.getNombreUsuario();
+				String usuarioTruncado = truncarNombre(nombreUsuario, 7);
+
 				sb.append(String.format("%-3s | %-20s | %-8s | %-10d | %-8d\n",
-					posicion,                    // Posición en la cola (con * para el primero)
-					nombreTruncado,              // Nombre del documento
-					usuarioTruncado,             // Usuario
-					doc.getClaveOrdenacion(),    // Prioridad calculada
+					posicion, // Posición en la cola (con * para el primero)
+					nombreTruncado, // Nombre del documento
+					usuarioTruncado, // Usuario
+					doc.getClaveOrdenacion(), // Prioridad calculada
 					doc.getTamaño()));            // Tamaño en páginas
 			}
 		}
-		
+
 		sb.append("\n==========================================\n");
 		sb.append("* = Siguiente documento a imprimir\n");
 		sb.append("Prioridad: menor valor = mayor prioridad");
@@ -791,6 +837,30 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
+	 * Metodo responsable de cerrar la aplicacion
+	 */
+	private void cerrarAplicacion() {
+		int opcion = javax.swing.JOptionPane.showConfirmDialog(
+			this,
+			"¿Desea guardar los usuarios en el archivo CSV antes de salir?",
+			"Guardar antes de salir",
+			javax.swing.JOptionPane.YES_NO_CANCEL_OPTION,
+			javax.swing.JOptionPane.QUESTION_MESSAGE
+		);
+
+		if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+			String[][] datosDeUsuarios = recolectarDatos();
+			boolean exito = manejadorArchivos.guardarUsuarios(this, datosDeUsuarios);
+			if (exito) {
+				System.exit(0);
+			}
+
+		} else if (opcion == javax.swing.JOptionPane.NO_OPTION) {
+			System.exit(0);
+		}
+	}
+
+	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String args[]) {
@@ -817,17 +887,17 @@ public class principal extends javax.swing.JFrame {
 
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JButton AgregarUsuario;
+        private javax.swing.JButton CancelarCola;
         private javax.swing.JButton CargarCSV;
         private javax.swing.JButton CrearDoc;
         private javax.swing.JButton EliminarDoc;
         private javax.swing.JButton EliminarUsuarios;
+        private javax.swing.JButton LibrerarImpresora;
         private javax.swing.JList<String> ListadeUsuarios;
         private javax.swing.JButton MnadarImprimir;
         private javax.swing.JTextArea VistaArbol;
         private javax.swing.JTextArea VistaLista;
         private javax.swing.JCheckBox esPrioritario;
-        private javax.swing.JButton jButton1;
-        private javax.swing.JButton jButton5;
         private javax.swing.JButton jButton6;
         private javax.swing.JPanel jPanel1;
         private javax.swing.JPanel jPanel2;

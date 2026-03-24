@@ -69,11 +69,13 @@ public class Usuario {
 	 * @return Nivel de prioridad (1=alta, 2=media, 3=baja)
 	 */
 	public int getPrioridad() {
-		if (tipo.equals("prioridad_alta")) {
+		String t = tipo.toLowerCase().trim();
+		if (t.contains("alta")) {
 			return 1;
-		} else if (tipo.equals("prioridad_media")) {
+		} else if (t.contains("media")) {
 			return 2;
 		} else {
+			// Por defecto será 3 (baja) para cualquier otro caso
 			return 3;
 		}
 	}
@@ -138,8 +140,10 @@ public class Usuario {
 		}
 		return false;
 	}
+
 	/**
 	 * Metodo responsable de buscar un documento por su nombre
+	 *
 	 * @param nombre es el nombre del documento que se quiere buscar
 	 */
 	public NodoDocumento buscarDocumentoPorNombre(String nombre) {
@@ -159,7 +163,7 @@ public class Usuario {
 
 	/**
 	 * Obtiene una lista con todos los documentos del usuario.
-	 * 
+	 *
 	 * @return Lista de todos los documentos
 	 */
 	public java.util.List<NodoDocumento> getDocumentos() {

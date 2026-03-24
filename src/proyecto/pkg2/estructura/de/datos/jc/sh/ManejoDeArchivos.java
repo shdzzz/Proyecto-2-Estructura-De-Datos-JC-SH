@@ -24,6 +24,7 @@ public class ManejoDeArchivos {
 	// Variable para guardar los mensajes de error y que tu JFrame pueda leerlos
 
 	private String ultimoError = "";
+	private File archivoCSVActual = null;
 
 	/**
 	 * Devuelve el último mensaje de error registrado. Ideal para usarlo en
@@ -35,8 +36,10 @@ public class ManejoDeArchivos {
 
 	/**
 	 * Abre el JFileChooser, verifica el archivo y extrae los datos.
+	 *
 	 * @param padre El componente padre (tu JFrame).
-	 * @return Una matriz String[][] con los usuarios y tipos, o null si hubo un error.
+	 * @return Una matriz String[][] con los usuarios y tipos, o null si
+	 * hubo un error.
 	 */
 	public String[][] cargarUsuarios(Component padre) {
 		JFileChooser selector = new JFileChooser();
@@ -48,15 +51,11 @@ public class ManejoDeArchivos {
 			ultimoError = "Carga cancelada por el usuario.";
 			return null; // Retornamos null porque no hay datos
 		}
-
 		File archivo = selector.getSelectedFile();
-
-		// 1. Llamamos a tu método exclusivo de verificación
 		if (!verificarFormato(archivo)) {
 			return null; // Si falla, el mensaje de error ya se guardó dentro del método
 		}
-
-		// 2. Si el formato es correcto, leemos los datos y los devolvemos
+		this.archivoCSVActual = archivo;
 		return extraerDatos(archivo);
 	}
 
@@ -153,38 +152,38 @@ public class ManejoDeArchivos {
 
 	/**
 	 * Guarda una matriz de datos en un archivo CSV.
+	 *
 	 * @param padre El componente padre (JFrame).
 	 * @param datos Matriz String[][] con los usuarios a guardar.
 	 * @return true si se guardó correctamente, false si hubo error.
 	 */
 	public boolean guardarUsuarios(Component padre, String[][] datos) {
-		JFileChooser selector = new JFileChooser();
-		selector.setDialogTitle("Guardar archivo CSV");
-		selector.setFileFilter(new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv"));
+		File archivoDestino = archivoCSVActual;
+		if (archivoDestino == null) {
+			JFileChooser selector = new JFileChooser();
+			selector.setDialogTitle("Guardar archivo CSV");
+			selector.setFileFilter(new FileNameExtensionFilter("Archivos CSV (*.csv)", "csv"));
 
-		int seleccion = selector.showSaveDialog(padre);
-		if (seleccion != JFileChooser.APPROVE_OPTION) {
-			ultimoError = "Guardado cancelado.";
-			return false;
+			int seleccion = selector.showSaveDialog(padre);
+			if (seleccion != JFileChooser.APPROVE_OPTION) {
+				ultimoError = "Guardado cancelado.";
+				return false; 
+			}
+
+			archivoDestino = selector.getSelectedFile();
+			if (!archivoDestino.getName().toLowerCase().endsWith(".csv")) {
+				archivoDestino = new File(archivoDestino.getParentFile(), archivoDestino.getName() + ".csv");
+			}
+			archivoCSVActual = archivoDestino;
 		}
-
-		File archivo = selector.getSelectedFile();
-		if (!archivo.getName().toLowerCase().endsWith(".csv")) {
-			archivo = new File(archivo.getParentFile(), archivo.getName() + ".csv");
-		}
-
-		try (PrintWriter pw = new PrintWriter(new FileWriter(archivo))) {
-			// Escribimos la cabecera obligatoria
+		try (PrintWriter pw = new PrintWriter(new FileWriter(archivoDestino))) {
 			pw.println("usuario, tipo");
-
-			// Escribimos los datos de la matriz
 			if (datos != null) {
 				for (int i = 0; i < datos.length; i++) {
 					pw.println(datos[i][0] + ", " + datos[i][1]);
 				}
 			}
 			return true;
-
 		} catch (IOException e) {
 			ultimoError = "Error al escribir el archivo: " + e.getMessage();
 			return false;
