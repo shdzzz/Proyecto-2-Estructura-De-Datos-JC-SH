@@ -16,6 +16,7 @@ public class NodoDocumento {
     private int prioridadCalculada;
     private long claveOrdenacion;
     private boolean enCola;
+    private NodoDocumento siguiente;
     
     /**
      * Constructor para crear un nuevo documento.
@@ -39,6 +40,7 @@ public class NodoDocumento {
         this.prioridadCalculada = 0; // Se calculará después
         this.claveOrdenacion = 0; // Se calculará después
         this.enCola = false;
+	this.siguiente = null;
     }
     
     public String getNombre() {
@@ -95,6 +97,14 @@ public class NodoDocumento {
     
     public void setIndiceEnMonticulo(int indiceEnMonticulo) {
         this.indiceEnMonticulo = indiceEnMonticulo;
+    }
+    
+    public NodoDocumento getSiguiente(){
+	    return siguiente;
+    }
+    
+    public void setSiguiente(NodoDocumento siguiente){
+	    this.siguiente = siguiente;
     }
     
     /**

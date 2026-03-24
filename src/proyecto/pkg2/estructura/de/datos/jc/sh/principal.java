@@ -6,6 +6,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,6 +24,12 @@ public class principal extends javax.swing.JFrame {
 	public principal() {
 		initComponents();
 		ListadeUsuarios.setModel(modeloUsuarios);
+		DefaultTableModel modeloTablaDocs = new DefaultTableModel();
+		modeloTablaDocs.addColumn("Nombre");
+		modeloTablaDocs.addColumn("Tamaño (págs)");
+		modeloTablaDocs.addColumn("Tipo");
+		modeloTablaDocs.addColumn("Estado"); // Para saber si está en cola o no 
+		jTable1.setModel(modeloTablaDocs);
 	}
 
 	/**
@@ -68,6 +75,7 @@ public class principal extends javax.swing.JFrame {
                         public int getSize() { return strings.length; }
                         public String getElementAt(int i) { return strings[i]; }
                 });
+                ListadeUsuarios.addListSelectionListener(this::ListadeUsuariosValueChanged);
                 jScrollPane1.setViewportView(ListadeUsuarios);
 
                 CargarCSV.setText("Cargar CSV");
@@ -303,6 +311,7 @@ public class principal extends javax.swing.JFrame {
 				JOptionPane.showMessageDialog(this, "El usuario '" + nombre + "' ya existe.", "Error", JOptionPane.WARNING_MESSAGE);
 			} else {
 				Usuario nuevo = new Usuario(nombre, tipo);
+				MiTablaHash.agregarUsuario(nombre, tipo, nuevo);
 				modeloUsuarios.addElement(nuevo.getNombre() + " (" + nuevo.getTipo() + ")");
 				JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
 			}
@@ -311,6 +320,38 @@ public class principal extends javax.swing.JFrame {
 
         private void CrearDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearDocActionPerformed
 		// TODO add your handling code here:
+		int seleccionado = ListadeUsuarios.getSelectedIndex();
+		if (seleccionado == -1) {
+			JOptionPane.showMessageDialog(this, "Por favor, seleccione un usuario de la lista.");
+			return;
+		}
+
+		String item = modeloUsuarios.getElementAt(seleccionado);
+		String nombreUsuario = item.split(" \\(")[0]; // Extrae el nombre antes del paréntesis
+		String nombreDoc = JOptionPane.showInputDialog(this, "Nombre del documento:");
+		if (nombreDoc == null || nombreDoc.trim().isEmpty()) {
+			return;
+		}
+
+		String tamañoStr = JOptionPane.showInputDialog(this, "Tamaño (páginas):");
+		int tamaño;
+		try {
+			tamaño = Integer.parseInt(tamañoStr);
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "El tamaño debe ser un número.");
+			return;
+		}
+
+		String tipoDoc = JOptionPane.showInputDialog(this, "Tipo (PDF, DOCX, etc):");
+		Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
+
+		if (user != null) {
+			NodoDocumento nuevo = new NodoDocumento(nombreDoc, tamaño, tipoDoc, 0, false, nombreUsuario);
+			user.agregarDocumento(nuevo);
+			actualizarTablaDocumentos(user);
+			JOptionPane.showMessageDialog(this, "Documento '" + nombreDoc + "' agregado a la carpeta de " + nombreUsuario);
+		}
+
         }//GEN-LAST:event_CrearDocActionPerformed
 
         private void EliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarUsuariosActionPerformed
@@ -324,13 +365,12 @@ public class principal extends javax.swing.JFrame {
 		String textoCompleto = modeloUsuarios.getElementAt(indiceSeleccionado);
 		String nombreUsuario = textoCompleto.split(" \\(")[0];
 
-		
 		int confirmar = JOptionPane.showConfirmDialog(this,
 			"¿Seguro que desea eliminar a '" + nombreUsuario + "'?\nEsto borrará todos sus documentos.",
 			"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
 		if (confirmar == JOptionPane.YES_OPTION) {
-			boolean eliminadoDeHash = MiTablaHash.eliminarUsuarioHash(nombreUsuario);
+			boolean eliminadoDeHash = MiTablaHash.eliminarUsuario(nombreUsuario);
 			if (eliminadoDeHash) {
 				modeloUsuarios.remove(indiceSeleccionado);
 				JOptionPane.showMessageDialog(this, "Usuario '" + nombreUsuario + "' eliminado con éxito.");
@@ -339,6 +379,48 @@ public class principal extends javax.swing.JFrame {
 			}
 		}
         }//GEN-LAST:event_EliminarUsuariosActionPerformed
+
+        private void ListadeUsuariosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ListadeUsuariosValueChanged
+		// TODO add your handling code here:
+		if (!evt.getValueIsAdjusting()) {
+			int indice = ListadeUsuarios.getSelectedIndex();
+			if (indice != -1) {
+				String texto = modeloUsuarios.getElementAt(indice);
+				String nombre = texto.split(" \\(")[0].trim();
+				Usuario user = MiTablaHash.buscarUsuario(nombre);
+				actualizarTablaDocumentos(user);
+			}
+		}
+        }//GEN-LAST:event_ListadeUsuariosValueChanged
+
+	// Metodo auxiliares:
+	public void actualizarTablaDocumentos(Usuario user) {
+		DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
+		modelo.setRowCount(0);
+
+		if (user == null) {
+			System.out.println("DEBUG: Usuario no encontrado en la tabla hash");
+			return;
+		}
+
+		NodoDocumento actual = user.getPrimerDocumento();
+		if (actual == null) {
+			System.out.println("DEBUG: El usuario " + user.getNombre() + " no tiene documentos");
+		}
+
+		while (actual != null) {
+			modelo.addRow(new Object[]{
+				actual.getNombre(),
+				actual.getTamaño(),
+				actual.getTipo(),
+				actual.isEnCola() ? "En Cola" : "Pendiente"
+			});
+			actual = actual.getSiguiente();
+		}
+
+		jTable1.repaint();
+		jTable1.revalidate();
+	}
 
 	/**
 	 * @param args the command line arguments

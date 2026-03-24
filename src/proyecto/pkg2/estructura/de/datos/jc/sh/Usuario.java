@@ -8,6 +8,7 @@ public class Usuario {
     
     private String nombre;
     private String tipo;
+    private NodoDocumento primerDocumento;
     
     /**
      * Constructor para crear un nuevo usuario.
@@ -18,6 +19,7 @@ public class Usuario {
     public Usuario(String nombre, String tipo) {
         this.nombre = nombre;
         this.tipo = tipo;
+	this.primerDocumento = null;
     }
     
     /**
@@ -27,6 +29,10 @@ public class Usuario {
      */
     public String getNombre() {
         return nombre;
+    }
+    
+    public NodoDocumento getPrimerDocumento(){
+	    return primerDocumento;
     }
     
     /**
@@ -74,4 +80,24 @@ public class Usuario {
     public String toString() {
         return nombre + "," + tipo;
     }
+    /**
+     * Metodo responsable de agregar documento a un usuario: 
+     * @param nuevo es el documento a introducir
+     */
+    public void agregarDocumento(NodoDocumento nuevo){
+	    if(this.primerDocumento == null){ // si no hay primer documento el nuevo es el primero
+		    this.primerDocumento = nuevo;
+	    } else{ // cuando ya hay un primer documento
+		    NodoDocumento aux = primerDocumento;
+		    while (aux.getSiguiente() != null){
+			    aux = aux.getSiguiente();
+		    }
+		    aux.setSiguiente(nuevo);
+	    }
+    }
+    
+    public NodoDocumento getPrimerDoc(){
+	    return primerDocumento;
+    }
+    
 }
