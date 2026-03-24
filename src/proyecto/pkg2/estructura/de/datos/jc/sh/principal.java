@@ -394,32 +394,34 @@ public class principal extends javax.swing.JFrame {
         }//GEN-LAST:event_ListadeUsuariosValueChanged
 
 	// Metodo auxiliares:
+	
+	/**
+	 * Metodo Necesario para mostrar los documentos en el jTable1
+	 * sin este solo se guardaria el documento en memoria
+	 * @param user por cada usuario tiene sus documentos
+	 */
 	public void actualizarTablaDocumentos(Usuario user) {
 		DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
 		modelo.setRowCount(0);
 
 		if (user == null) {
-			System.out.println("DEBUG: Usuario no encontrado en la tabla hash");
 			return;
 		}
 
 		NodoDocumento actual = user.getPrimerDocumento();
-		if (actual == null) {
-			System.out.println("DEBUG: El usuario " + user.getNombre() + " no tiene documentos");
-		}
 
 		while (actual != null) {
+			String estado = actual.isEnCola() ? "En Cola" : "Pendiente";
+
 			modelo.addRow(new Object[]{
-				actual.getNombre(),
-				actual.getTamaño(),
-				actual.getTipo(),
-				actual.isEnCola() ? "En Cola" : "Pendiente"
+				actual.getNombre(), 
+				actual.getTamaño(), 
+				actual.getTipo(), 
+				estado 
 			});
+
 			actual = actual.getSiguiente();
 		}
-
-		jTable1.repaint();
-		jTable1.revalidate();
 	}
 
 	/**
