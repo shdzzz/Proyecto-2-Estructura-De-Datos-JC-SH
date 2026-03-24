@@ -3,13 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package proyecto.pkg2.estructura.de.datos.jc.sh;
+
 import javax.swing.JOptionPane;
 import javax.swing.DefaultListModel;
+
 /**
  *
  * @author andre
  */
 public class principal extends javax.swing.JFrame {
+
 	DefaultListModel<String> modeloUsuarios = new DefaultListModel<>();
 	TablaDispersion MiTablaHash = new TablaDispersion();
 	private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(principal.class.getName());
@@ -31,18 +34,19 @@ public class principal extends javax.swing.JFrame {
         // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
         private void initComponents() {
 
+                jButton6 = new javax.swing.JButton();
                 jPanel3 = new javax.swing.JPanel();
                 jScrollPane1 = new javax.swing.JScrollPane();
                 ListadeUsuarios = new javax.swing.JList<>();
                 CargarCSV = new javax.swing.JButton();
                 AgregarUsuario = new javax.swing.JButton();
-                EliminarUsuario = new javax.swing.JButton();
+                EliminarUsuarios = new javax.swing.JButton();
                 jPanel1 = new javax.swing.JPanel();
                 jScrollPane2 = new javax.swing.JScrollPane();
                 jTable1 = new javax.swing.JTable();
-                jButton2 = new javax.swing.JButton();
-                jButton3 = new javax.swing.JButton();
-                jButton4 = new javax.swing.JButton();
+                CrearDoc = new javax.swing.JButton();
+                EliminarDoc = new javax.swing.JButton();
+                MnadarImprimir = new javax.swing.JButton();
                 jCheckBox1 = new javax.swing.JCheckBox();
                 jPanel2 = new javax.swing.JPanel();
                 jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -50,6 +54,8 @@ public class principal extends javax.swing.JFrame {
                 VistaLista = new javax.swing.JPanel();
                 jButton1 = new javax.swing.JButton();
                 jButton5 = new javax.swing.JButton();
+
+                jButton6.setText("jButton6");
 
                 setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
                 setBackground(new java.awt.Color(255, 255, 255));
@@ -70,35 +76,36 @@ public class principal extends javax.swing.JFrame {
                 AgregarUsuario.setText("[+] Agregar Usuario");
                 AgregarUsuario.addActionListener(this::AgregarUsuarioActionPerformed);
 
-                EliminarUsuario.setText("[-] Eliminar Usuario");
+                EliminarUsuarios.setText("[-] Eliminar Usuario");
+                EliminarUsuarios.addActionListener(this::EliminarUsuariosActionPerformed);
 
                 javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
                 jPanel3.setLayout(jPanel3Layout);
                 jPanel3Layout.setHorizontalGroup(
                         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jScrollPane1)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(EliminarUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(AgregarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                                         .addComponent(CargarCSV, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(AgregarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
-                                        .addComponent(EliminarUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addContainerGap())
                 );
                 jPanel3Layout.setVerticalGroup(
                         jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(CargarCSV)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                                .addComponent(AgregarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(EliminarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(CargarCSV, javax.swing.GroupLayout.PREFERRED_SIZE, 21, Short.MAX_VALUE)
+                                .addGap(12, 12, 12)
+                                .addComponent(AgregarUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(EliminarUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(20, 20, 20))
                 );
 
-                getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 270, 590));
+                getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 280, 610));
 
                 jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Documentos Del Usuario Selccionado"));
 
@@ -115,13 +122,14 @@ public class principal extends javax.swing.JFrame {
                 ));
                 jScrollPane2.setViewportView(jTable1);
 
-                jButton2.setText("Crear Doc");
+                CrearDoc.setText("Crear Doc");
+                CrearDoc.addActionListener(this::CrearDocActionPerformed);
 
-                jButton3.setText("Eliminar Doc");
-                jButton3.addActionListener(this::jButton3ActionPerformed);
+                EliminarDoc.setText("Eliminar Doc");
+                EliminarDoc.addActionListener(this::EliminarDocActionPerformed);
 
-                jButton4.setText("Mandar a imprimir");
-                jButton4.addActionListener(this::jButton4ActionPerformed);
+                MnadarImprimir.setText("Mandar a imprimir");
+                MnadarImprimir.addActionListener(this::MnadarImprimirActionPerformed);
 
                 jCheckBox1.setText("Es prioritario");
 
@@ -135,16 +143,16 @@ public class principal extends javax.swing.JFrame {
                                 .addContainerGap())
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(165, 165, 165)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(EliminarDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(MnadarImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jCheckBox1)
                                 .addContainerGap(50, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(16, 16, 16)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(CrearDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addContainerGap(451, Short.MAX_VALUE)))
                 );
                 jPanel1Layout.setVerticalGroup(
@@ -154,14 +162,14 @@ public class principal extends javax.swing.JFrame {
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(EliminarDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(MnadarImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jCheckBox1))
                                 .addContainerGap())
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                         .addContainerGap(258, Short.MAX_VALUE)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(CrearDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addContainerGap()))
                 );
 
@@ -212,45 +220,45 @@ public class principal extends javax.swing.JFrame {
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jTabbedPane1)
                                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(10, 10, 10)))
                                 .addContainerGap())
                 );
                 jPanel2Layout.setVerticalGroup(
                         jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addContainerGap()
                                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jButton1)
                                         .addComponent(jButton5))
-                                .addContainerGap())
+                                .addGap(15, 15, 15))
                 );
 
                 jTabbedPane1.getAccessibleContext().setAccessibleName("Vista Del Arbol");
                 jTabbedPane1.getAccessibleContext().setAccessibleDescription("");
 
-                getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 330, 610, 260));
+                getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 330, 610, 280));
 
                 pack();
         }// </editor-fold>//GEN-END:initComponents
 
-        private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-                // TODO add your handling code here:
-        }//GEN-LAST:event_jButton3ActionPerformed
+        private void EliminarDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarDocActionPerformed
+		// TODO add your handling code here:
+        }//GEN-LAST:event_EliminarDocActionPerformed
 
-        private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-                // TODO add your handling code here:
-        }//GEN-LAST:event_jButton4ActionPerformed
+        private void MnadarImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MnadarImprimirActionPerformed
+		// TODO add your handling code here:
+        }//GEN-LAST:event_MnadarImprimirActionPerformed
 
         private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarCSVActionPerformed
-                // TODO add your handling code here:
-		ManejoDeArchivos  manejador = new ManejoDeArchivos();
+		// TODO add your handling code here:
+		ManejoDeArchivos manejador = new ManejoDeArchivos();
 		String[][] datosUsuarios = manejador.cargarUsuarios(this);
-		if(datosUsuarios != null){
-			for (int i = 0; i< datosUsuarios.length; i++){
+		if (datosUsuarios != null) {
+			for (int i = 0; i < datosUsuarios.length; i++) {
 				String nombre = datosUsuarios[i][0];
 				String tipo = datosUsuarios[i][1];
 				Usuario nuevoUsuario = new Usuario(nombre, tipo);
@@ -258,46 +266,94 @@ public class principal extends javax.swing.JFrame {
 				modeloUsuarios.addElement(nombre + " (" + tipo + " )");
 			}
 			JOptionPane.showMessageDialog(this, "se cargaron " + datosUsuarios.length + " usuarios exitosamente.", "Carga completa", JOptionPane.INFORMATION_MESSAGE);
-		} else{
+		} else {
 			String Error = manejador.getUltimoError();
-			
-			if(!Error.equals("Carga cancelada por el usuario.")){
+
+			if (!Error.equals("Carga cancelada por el usuario.")) {
 				JOptionPane.showMessageDialog(this, Error, "Error de formato", JOptionPane.ERROR_MESSAGE);
 			}
 		}
         }//GEN-LAST:event_CargarCSVActionPerformed
 
         private void AgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarUsuarioActionPerformed
-                // TODO add your handling code here:
+		// TODO add your handling code here:
 		String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo usuario: ", "Nuevo Usuario", JOptionPane.QUESTION_MESSAGE);
-		if (nombre == null) return;
+		if (nombre == null) {
+			return;
+		}
 		nombre = nombre.trim();
-		if(nombre.isEmpty()){
+		if (nombre.isEmpty()) {
 			JOptionPane.showMessageDialog(this, "El nombre del usuario no puede estar vacio..", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String[] opciones = {"prioridad alta", "prioridad media", "prioridad baja"};
-    
-		String tipo = (String) JOptionPane.showInputDialog(this, 
+
+		String tipo = (String) JOptionPane.showInputDialog(this,
 			"Seleccione la prioridad para " + nombre + ":",
 			"Seleccionar Prioridad",
 			JOptionPane.QUESTION_MESSAGE,
-			null, 
-			opciones, 
-			opciones[0] 
+			null,
+			opciones,
+			opciones[0]
 		);
-		
+
 		if (tipo != null) {
-		    
-		    if (MiTablaHash.existeUsuario(nombre)) {
-			JOptionPane.showMessageDialog(this, "El usuario '" + nombre + "' ya existe.", "Error", JOptionPane.WARNING_MESSAGE);
-		    } else {
-			Usuario nuevo = new Usuario(nombre, tipo);
-			modeloUsuarios.addElement(nuevo.getNombre() + " (" + nuevo.getTipo() + ")");
-			JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
-		    }
+
+			if (MiTablaHash.existeUsuario(nombre)) {
+				JOptionPane.showMessageDialog(this, "El usuario '" + nombre + "' ya existe.", "Error", JOptionPane.WARNING_MESSAGE);
+			} else {
+				Usuario nuevo = new Usuario(nombre, tipo);
+				modeloUsuarios.addElement(nuevo.getNombre() + " (" + nuevo.getTipo() + ")");
+				JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
+			}
 		}
         }//GEN-LAST:event_AgregarUsuarioActionPerformed
+
+        private void CrearDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearDocActionPerformed
+		// TODO add your handling code here:
+        }//GEN-LAST:event_CrearDocActionPerformed
+
+        private void EliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarUsuariosActionPerformed
+		// TODO add your handling code here:
+		// 1. Verificamos que el usuario haya seleccionado a alguien en el JList
+		int indiceSeleccionado = ListadeUsuarios.getSelectedIndex();
+
+		if (indiceSeleccionado == -1) {
+			JOptionPane.showMessageDialog(this, "Seleccione un usuario de la lista para eliminarlo.", "Aviso", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		// 2. Extraemos el texto del elemento seleccionado (ej: "Juan (prioridad_alta)")
+		String textoCompleto = modeloUsuarios.getElementAt(indiceSeleccionado);
+
+		// 3. Limpiamos el texto para quedarnos solo con el nombre (antes del paréntesis)
+		// Usamos split o substring para obtener el nombre exacto que sirve de llave en la Hash
+		String nombreUsuario = textoCompleto.split(" \\(")[0];
+
+		// 4. Preguntamos para evitar accidentes (Usabilidad)
+		int confirmar = JOptionPane.showConfirmDialog(this,
+			"¿Seguro que desea eliminar a '" + nombreUsuario + "'?\nEsto borrará todos sus documentos.",
+			"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+
+		if (confirmar == JOptionPane.YES_OPTION) {
+
+			// A. Lo eliminamos de la LÓGICA (Tu TablaDispersion corregida)
+			// 'miTablaHash' es el nombre de la variable de tu tabla en el JFrame
+			boolean eliminadoDeHash = MiTablaHash.eliminarUsuarioHash(nombreUsuario);
+
+			if (eliminadoDeHash) {
+				// B. Lo eliminamos de la VISTA (El modelo del JList)
+				modeloUsuarios.remove(indiceSeleccionado);
+
+				// C. Opcional: Si tienes una JTable mostrando documentos, límpiala
+				// ((DefaultTableModel)tablaDocumentos.getModel()).setRowCount(0);
+				JOptionPane.showMessageDialog(this, "Usuario '" + nombreUsuario + "' eliminado con éxito.");
+			} else {
+				// Caso borde: por si algo raro pasó en la sincronización
+				JOptionPane.showMessageDialog(this, "Error: El usuario no existía en la estructura de datos.");
+			}
+		}
+        }//GEN-LAST:event_EliminarUsuariosActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -327,15 +383,16 @@ public class principal extends javax.swing.JFrame {
         // Variables declaration - do not modify//GEN-BEGIN:variables
         private javax.swing.JButton AgregarUsuario;
         private javax.swing.JButton CargarCSV;
-        private javax.swing.JButton EliminarUsuario;
+        private javax.swing.JButton CrearDoc;
+        private javax.swing.JButton EliminarDoc;
+        private javax.swing.JButton EliminarUsuarios;
         private javax.swing.JList<String> ListadeUsuarios;
+        private javax.swing.JButton MnadarImprimir;
         private javax.swing.JPanel MostrarArbol;
         private javax.swing.JPanel VistaLista;
         private javax.swing.JButton jButton1;
-        private javax.swing.JButton jButton2;
-        private javax.swing.JButton jButton3;
-        private javax.swing.JButton jButton4;
         private javax.swing.JButton jButton5;
+        private javax.swing.JButton jButton6;
         private javax.swing.JCheckBox jCheckBox1;
         private javax.swing.JPanel jPanel1;
         private javax.swing.JPanel jPanel2;
