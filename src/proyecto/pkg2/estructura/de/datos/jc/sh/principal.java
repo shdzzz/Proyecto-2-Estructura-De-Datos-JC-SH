@@ -716,7 +716,7 @@ public class principal extends javax.swing.JFrame {
 		VistaArbol.setText(""); // Limpiar JTextArea
 
 		// IMPORTANTE: Forzar fuente Monospaced por código si no lo hiciste en el diseño
-		VistaArbol.setFont(new java.awt.Font("Courier New", 0, 12));
+		VistaArbol.setFont(new java.awt.Font("Monospaced", 0, 11));
 
 		int n = MiMonticulo.getTamaño();
 
