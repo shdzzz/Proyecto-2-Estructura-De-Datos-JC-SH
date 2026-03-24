@@ -39,6 +39,19 @@ public class TablaDispersion {
         tamaño++;
     }
     
+    public boolean eliminarUsuarioHash(String nombreUsuario) {
+        int indice = funcionHash(nombreUsuario);
+        
+        // Verificamos si la cubeta tiene algo
+        if (!tabla[indice].estaVacia()) {
+            // Para ser exactos, reseteamos la lista de ese índice
+            tabla[indice] = new ListaEnlazada(); 
+            tamaño--;
+            return true;
+        }
+        return false;
+    }
+    
     public ListaEnlazada buscarUsuario(String nombre) {
         int indice = funcionHash(nombre);
         if (tabla[indice].estaVacia()) {
