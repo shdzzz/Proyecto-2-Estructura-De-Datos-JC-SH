@@ -34,6 +34,7 @@ public class principal extends javax.swing.JFrame {
 		modeloTablaDocs.addColumn("Estado"); // Para saber si está en cola o no 
 		jTable1.setModel(modeloTablaDocs);
 		miReloj.reiniciar();
+		this.setTitle("Cola de Prioridad y Hash Tables: JC-SH");
 		/**
 		 * Estas lineas son necesarias para que, cuando el usuario cierre el programa en donde esta la X, le pregunte si quiere guardar, o no el documento
 		 */
