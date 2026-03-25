@@ -325,9 +325,13 @@ public class principal extends javax.swing.JFrame {
 				
 				doc.calcularClaveOrdenacion(prioridadUsuario);
 				
-				doc.setNombreUsuario(null);
 				if (MiMonticulo.insertar(doc)) {
 					doc.setEnCola(true);
+					
+					// Registrar documento en cola en la tabla hash
+					int indiceInsertado = MiMonticulo.getTamaño() - 1; // Última posición
+					MiTablaHash.registrarDocumentoEnCola(nombreUser, doc, indiceInsertado, doc.getEtiquetaTiempo());
+					
 					actualizarTablaDocumentos(user);
 					actualizarVistaLista();
 					actualizarVistaArbol();
@@ -496,12 +500,17 @@ public class principal extends javax.swing.JFrame {
 			// Incrementar el tiempo del reloj
 			miReloj.incrementarTiempo();
 
+			// Eliminar del registro de cola en la tabla hash
+			String nombreUsuario = docImpreso.getNombreUsuario();
+			if (nombreUsuario != null) {
+				MiTablaHash.eliminarDocumentoDeCola(nombreUsuario, docImpreso.getNombre());
+			}
+
 			// Actualizar vistas
 			actualizarVistaLista();
 			actualizarVistaArbol();
 
 			// Actualizar la tabla del usuario correspondiente
-			String nombreUsuario = docImpreso.getNombreUsuario();
 			Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
 			if (user != null) {
 				actualizarTablaDocumentos(user);
@@ -509,7 +518,7 @@ public class principal extends javax.swing.JFrame {
 
 			JOptionPane.showMessageDialog(this,
 				"Documento impreso: " + docImpreso.getNombre()
-				+ "\nUsuario: " + docImpreso.getNombreUsuario()
+				+ "\nUsuario: " + nombreUsuario
 				+ "\nTamaño: " + docImpreso.getTamaño() + " páginas"
 				+ "\nTiempo actual: " + miReloj.getTiempoActual(),
 				"Impresión Completada", JOptionPane.INFORMATION_MESSAGE);
@@ -581,6 +590,9 @@ public class principal extends javax.swing.JFrame {
 			if (docACancelar != null) {
 				// Eliminar del montículo
 				if (MiMonticulo.eliminarDocumento(docACancelar)) {
+					// Eliminar del registro de cola en la tabla hash
+					MiTablaHash.eliminarDocumentoDeCola(nombreUser, docACancelar.getNombre());
+					
 					// Incrementar el tiempo del reloj
 					miReloj.incrementarTiempo();
 
@@ -736,8 +748,8 @@ public class principal extends javax.swing.JFrame {
 		int altura = (int) (Math.log(n) / Math.log(2)) + 1;
 
 		// Variables para controlar el espaciado
-		int anchoNodo = 16; // Ancho fijo para "[nombre (P:X)]"
-		int separation = 4; // Espacio mínimo entre hermanos
+		int anchoNodo = 25; // Ancho ampliado para mostrar nombres completos "[nombre_largo (P:XXXXX)]"
+		int separation = 2; // Espacio reducido entre hermanos para compensar
 
 		// El ancho del último nivel determina el espaciado base
 		int maxNodosUltimoNivel = (int) Math.pow(2, altura - 1);
@@ -766,10 +778,9 @@ public class principal extends javax.swing.JFrame {
 			for (int i = 0; i < nodosEnNivel && indiceActual < n; i++) {
 				NodoDocumento doc = MiMonticulo.getNodo(indiceActual);
 
-				// Formatear el texto del nodo "[Nombre (P:X)]"
-				// Truncamos el nombre a 7 caracteres para que no desborde
-				String nombreTruncado = truncarNombre(doc.getNombre(), 7);
-				String textoNodo = "[" + nombreTruncado + " (P:" + doc.getClaveOrdenacion() + ")]";
+				// Formatear el texto del nodo "[nombre (P:X)]"
+				// Mostramos el nombre completo sin truncar
+				String textoNodo = "[" + doc.getNombre() + " (P:" + doc.getClaveOrdenacion() + ")]";
 
 				// Resaltar la raíz (primer elemento) con un asterisco
 				if (indiceActual == 0) {
