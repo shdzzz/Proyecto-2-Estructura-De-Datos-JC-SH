@@ -455,8 +455,30 @@ public class principal extends javax.swing.JFrame {
 		String textoCompleto = modeloUsuarios.getElementAt(indiceSeleccionado);
 		String nombreUsuario = textoCompleto.split(" \\(")[0];
 
+		// VERIFICAR si tiene documentos en cola ANTES de eliminar
+		Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
+		boolean tieneDocumentosEnCola = false;
+		if (user != null) {
+			for (NodoDocumento doc : user.getDocumentos()) {
+				if (doc.isEnCola()) {
+					tieneDocumentosEnCola = true;
+					break;
+				}
+			}
+		}
+
+		if (tieneDocumentosEnCola) {
+			JOptionPane.showMessageDialog(this, 
+				"No se puede eliminar el usuario '" + nombreUsuario + 
+				"' porque tiene documentos en la cola de impresión.\n" +
+				"Primero cancele sus documentos de la cola.", 
+				"Usuario con documentos en cola", 
+				JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
 		int confirmar = JOptionPane.showConfirmDialog(this,
-			"¿Seguro que desea eliminar a '" + nombreUsuario + "'?\nEsto borrará todos sus documentos.",
+			"¿Seguro que desea eliminar a '" + nombreUsuario + "'?\nEsto borrará todos sus documentos no encolados.",
 			"Confirmar eliminación", JOptionPane.YES_NO_OPTION);
 
 		if (confirmar == JOptionPane.YES_OPTION) {
@@ -590,6 +612,10 @@ public class principal extends javax.swing.JFrame {
 			if (docACancelar != null) {
 				// Eliminar del montículo
 				if (MiMonticulo.eliminarDocumento(docACancelar)) {
+					// AÑADIR ESTAS LÍNEAS:
+					docACancelar.setEnCola(false);
+					docACancelar.setIndiceEnMonticulo(-1);
+					
 					// Eliminar del registro de cola en la tabla hash
 					MiTablaHash.eliminarDocumentoDeCola(nombreUser, docACancelar.getNombre());
 					
@@ -649,7 +675,12 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	private String[][] recolectarDatos() {
-
+		/**
+		 * Recolecta los datos de los usuarios desde la lista de la GUI.
+		 * Extrae el nombre y tipo de cada usuario para ser guardados en archivo.
+		 * 
+		 * @return Matriz de String [n][2] donde [n][0] es nombre y [n][1] es tipo
+		 */
 		javax.swing.ListModel modelo = ListadeUsuarios.getModel();
 		int cantidad = modelo.getSize();
 		String[][] matriz = new String[cantidad][2];
@@ -674,6 +705,9 @@ public class principal extends javax.swing.JFrame {
 	 * Metodo responsabel de actualizar la vista de lista este metodo se
 	 * usara cada vez que el usario agrgue un documento a la cola de
 	 * impresion.
+	 * 
+	 * Muestra la cola de impresión como una secuencia ordenada por prioridad.
+	 * Incluye información de tiempo actual, cantidad de documentos y leyenda.
 	 */
 	public void actualizarVistaLista() {
 
@@ -722,7 +756,11 @@ public class principal extends javax.swing.JFrame {
 	/**
 	 * Metodo responsable de actualizar la vista de arbol este metodo se
 	 * aplicara cada vez que el usario agregue un documento a la cola de
-	 * impresion
+	 * impresion.
+	 * 
+	 * Muestra la cola de impresión como una estructura jerárquica (min-heap).
+	 * Incluye información de tiempo actual, cantidad de documentos y leyenda.
+	 * Resalta la raíz como el siguiente documento a imprimir.
 	 */
 	public void actualizarVistaArbol() {
 		VistaArbol.setText(""); // Limpiar JTextArea
@@ -816,7 +854,12 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Método auxiliar para centrar texto
+	 * Método auxiliar para centrar texto en la vista de árbol.
+	 * Calcula y distribuye espacios para centrar el texto dentro de un ancho determinado.
+	 * 
+	 * @param texto Texto a centrar
+	 * @param longitud Longitud total del espacio disponible
+	 * @return Texto centrado con espacios a izquierda y derecha
 	 */
 	private String centrarTexto(String texto, int longitud) {
 		if (texto.length() >= longitud) {
@@ -838,7 +881,12 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Método auxiliar para truncar nombres largos
+	 * Método auxiliar para truncar nombres largos en la vista de lista.
+	 * Asegura que los nombres no desborden el formato de la tabla.
+	 * 
+	 * @param nombre Nombre original a truncar
+	 * @param longitudMax Longitud máxima permitida
+	 * @return Nombre truncado con punto suspensivo si excede el límite
 	 */
 	private String truncarNombre(String nombre, int longitudMax) {
 		if (nombre.length() > longitudMax) {
@@ -848,7 +896,9 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Metodo responsable de cerrar la aplicacion
+	 * Metodo responsable de cerrar la aplicacion.
+	 * Ofrece la opción de guardar los usuarios en archivo CSV antes de salir.
+	 * Gestiona el cierre seguro de la aplicación con confirmación del usuario.
 	 */
 	private void cerrarAplicacion() {
 		int opcion = javax.swing.JOptionPane.showConfirmDialog(

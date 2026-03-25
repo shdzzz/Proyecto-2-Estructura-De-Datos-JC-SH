@@ -203,11 +203,22 @@ public class TablaDispersion {
 	private void rehash() {
 		int nuevaCapacidad = capacidad * 2;
 		ListaEnlazada[] nuevaTabla = new ListaEnlazada[nuevaCapacidad];
-
 		for (int i = 0; i < nuevaCapacidad; i++) {
 			nuevaTabla[i] = new ListaEnlazada();
 		}
-
+		
+		// Reinsertar todos los elementos existentes
+		for (int i = 0; i < capacidad; i++) {
+			ListaEnlazada cubeta = tabla[i];
+			ListaEnlazada.NodoLista actual = cubeta.cabeza;
+			while (actual != null) {
+				InfoUsuario info = actual.dato;
+				int nuevoIndice = funcionHash(info.nombre);
+				nuevaTabla[nuevoIndice].agregar(info);
+				actual = actual.siguiente;
+			}
+		}
+		
 		this.tabla = nuevaTabla;
 		this.capacidad = nuevaCapacidad;
 	}
