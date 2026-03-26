@@ -348,63 +348,93 @@ public class principal extends javax.swing.JFrame {
 	 * Metodo responsable de cargar el archivo CSV, usando metodos de la
 	 * clase Manejo de archivos
 	 */
-        private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarCSVActionPerformed
-		// TODO add your handling code here:
-		String[][] datosUsuarios = manejadorArchivos.cargarUsuarios(this);
-		if (datosUsuarios != null) {
-			for (int i = 0; i < datosUsuarios.length; i++) {
-				String nombre = datosUsuarios[i][0];
-				String tipo = datosUsuarios[i][1];
-				Usuario nuevoUsuario = new Usuario(nombre, tipo);
-				MiTablaHash.agregarUsuario(nombre, tipo, nuevoUsuario);
-				modeloUsuarios.addElement(nombre + " (" + tipo + " )");
-			}
-			JOptionPane.showMessageDialog(this, "se cargaron " + datosUsuarios.length + " usuarios exitosamente.", "Carga completa", JOptionPane.INFORMATION_MESSAGE);
-		} else {
-			String Error = manejadorArchivos.getUltimoError();
-
-			if (!Error.equals("Carga cancelada por el usuario.")) {
-				JOptionPane.showMessageDialog(this, Error, "Error de formato", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-        }//GEN-LAST:event_CargarCSVActionPerformed
+        private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {
+    String[][] datosUsuarios = manejadorArchivos.cargarUsuarios(this);
+    if (datosUsuarios != null) {
+        int usuariosCargados = 0;
+        for (int i = 0; i < datosUsuarios.length; i++) {
+            String nombre = datosUsuarios[i][0];
+            String tipo = datosUsuarios[i][1];
+            
+            String tipoNormalizado;
+            String tipoMostrar;
+            if (tipo.toLowerCase().contains("alta")) {
+                tipoNormalizado = "prioridad_alta";
+                tipoMostrar = "Alta";
+            } else if (tipo.toLowerCase().contains("media")) {
+                tipoNormalizado = "prioridad_media";
+                tipoMostrar = "Media";
+            } else {
+                tipoNormalizado = "prioridad_baja";
+                tipoMostrar = "Baja";
+            }
+            
+            if (!MiTablaHash.existeUsuario(nombre)) {
+                Usuario nuevoUsuario = new Usuario(nombre, tipoNormalizado);
+                MiTablaHash.agregarUsuario(nombre, tipoNormalizado, nuevoUsuario);
+                modeloUsuarios.addElement(nombre + " (" + tipoMostrar + ")");
+                usuariosCargados++;
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Se cargaron " + usuariosCargados + " usuarios exitosamente.", "Carga completa", JOptionPane.INFORMATION_MESSAGE);
+    } else {
+        String Error = manejadorArchivos.getUltimoError();
+        if (!Error.equals("Carga cancelada por el usuario.")) {
+            JOptionPane.showMessageDialog(this, Error, "Error de formato", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
 	/**
 	 * Metodo responsable del funcionamiento del boton de agregar usuario
 	 */
-        private void AgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarUsuarioActionPerformed
-		// TODO add your handling code here:
-		String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo usuario: ", "Nuevo Usuario", JOptionPane.QUESTION_MESSAGE);
-		if (nombre == null) {
-			return;
-		}
-		nombre = nombre.trim();
-		if (nombre.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "El nombre del usuario no puede estar vacio..", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		String[] opciones = {"prioridad alta", "prioridad media", "prioridad baja"};
+        private void AgregarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {
+    String nombre = JOptionPane.showInputDialog(this, "Ingrese el nombre del nuevo usuario: ", "Nuevo Usuario", JOptionPane.QUESTION_MESSAGE);
+    if (nombre == null) {
+        return;
+    }
+    nombre = nombre.trim();
+    if (nombre.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "El nombre del usuario no puede estar vacio..", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    String[] opciones = {"Alta", "Media", "Baja"};
 
-		String tipo = (String) JOptionPane.showInputDialog(this,
-			"Seleccione la prioridad para " + nombre + ":",
-			"Seleccionar Prioridad",
-			JOptionPane.QUESTION_MESSAGE,
-			null,
-			opciones,
-			opciones[0]
-		);
+    String tipoSeleccionado = (String) JOptionPane.showInputDialog(this,
+        "Seleccione la prioridad para " + nombre + ":",
+        "Seleccionar Prioridad",
+        JOptionPane.QUESTION_MESSAGE,
+        null,
+        opciones,
+        opciones[0]
+    );
 
-		if (tipo != null) {
-
-			if (MiTablaHash.existeUsuario(nombre)) {
-				JOptionPane.showMessageDialog(this, "El usuario '" + nombre + "' ya existe.", "Error", JOptionPane.WARNING_MESSAGE);
-			} else {
-				Usuario nuevo = new Usuario(nombre, tipo);
-				MiTablaHash.agregarUsuario(nombre, tipo, nuevo);
-				modeloUsuarios.addElement(nuevo.getNombre() + " (" + nuevo.getTipo() + ")");
-				JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
-			}
-		}
-        }//GEN-LAST:event_AgregarUsuarioActionPerformed
+    if (tipoSeleccionado != null) {
+        String tipoNormalizado;
+        switch (tipoSeleccionado) {
+            case "Alta":
+                tipoNormalizado = "prioridad_alta";
+                break;
+            case "Media":
+                tipoNormalizado = "prioridad_media";
+                break;
+            case "Baja":
+                tipoNormalizado = "prioridad_baja";
+                break;
+            default:
+                tipoNormalizado = "prioridad_baja";
+        }
+        
+        if (MiTablaHash.existeUsuario(nombre)) {
+            JOptionPane.showMessageDialog(this, "El usuario '" + nombre + "' ya existe.", "Error", JOptionPane.WARNING_MESSAGE);
+        } else {
+            Usuario nuevo = new Usuario(nombre, tipoNormalizado);
+            MiTablaHash.agregarUsuario(nombre, tipoNormalizado, nuevo);
+            modeloUsuarios.addElement(nuevo.getNombre() + " (" + tipoSeleccionado + ")");
+            JOptionPane.showMessageDialog(this, "Usuario registrado con éxito.");
+        }
+    }
+}
 	/**
 	 * Metodo responsable del funcionamiento del boton de crearDocumento
 	 *
@@ -439,6 +469,11 @@ public class principal extends javax.swing.JFrame {
 		}
 
 		String tipoDoc = JOptionPane.showInputDialog(this, "Tipo (PDF, DOCX, etc):");
+		if (tipoDoc == null || tipoDoc.trim().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Debe ingresar un tipo de documento primero.", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
 		Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
 
 		if (user != null) {
@@ -748,7 +783,7 @@ public class principal extends javax.swing.JFrame {
 				String posicion = (i == 0) ? "*" + (i + 1) : " " + (i + 1);
 				String nombreTruncado = truncarNombre(doc.getNombre(), 18);
 				String nombreUsuario = MiTablaHash.buscarUsuarioPorDocumento(doc.getNombre());
-				String usuarioTruncado = truncarNombre((nombreUsuario != null) ? "---" : nombreUsuario, 7);
+				String usuarioTruncado = truncarNombre((nombreUsuario != null) ? nombreUsuario : "---", 7);
 
 				sb.append(String.format("%-3s | %-20s | %-8s | %-10d | %-8d\n",
 					posicion, // Posición en la cola (con * para el primero)

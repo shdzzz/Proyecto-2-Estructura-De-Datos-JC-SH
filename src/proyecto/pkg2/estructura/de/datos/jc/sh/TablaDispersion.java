@@ -114,7 +114,20 @@ public class TablaDispersion {
 	 * @return true si existe, false en caso contrario
 	 */
 	public boolean existeUsuario(String nombre) {
-		return !tabla[funcionHash(nombre)].estaVacia();
+		int indice = funcionHash(nombre);
+		ListaEnlazada cubeta = tabla[indice];
+		if (cubeta.estaVacia()) {
+			return false;
+		}
+		
+		ListaEnlazada.NodoLista actual = cubeta.cabeza;
+		while (actual != null) {
+			if (actual.dato.getNombre().equalsIgnoreCase(nombre)) {
+				return true;
+			}
+			actual = actual.siguiente;
+		}
+		return false;
 	}
 
 	/**
