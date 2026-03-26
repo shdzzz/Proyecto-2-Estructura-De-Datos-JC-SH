@@ -2,6 +2,8 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Clase para guardar datos de un documento.
+ * NOTA: Esta clase no almacena información del propietario.
+ * La relación usuario-documento se gestiona exclusivamente en TablaDispersion.
  *
  * @author shdz
  */
@@ -12,7 +14,6 @@ public class NodoDocumento {
 	private String tipo;
 	private long etiquetaTiempo;
 	private boolean esPrioritario;
-	private String nombreUsuario;
 	private int indiceEnMonticulo;
 	private int prioridadCalculada;
 	private long claveOrdenacion;
@@ -27,16 +28,14 @@ public class NodoDocumento {
 	 * @param tipo Tipo de documento
 	 * @param etiquetaTiempo Tiempo de creación
 	 * @param esPrioritario Indica si es prioritario
-	 * @param nombreUsuario Usuario propietario
 	 */
 	public NodoDocumento(String nombre, int tamaño, String tipo, long etiquetaTiempo,
-		boolean esPrioritario, String nombreUsuario) {
+		boolean esPrioritario) {
 		this.nombre = nombre;
 		this.tamaño = tamaño;
 		this.tipo = tipo;
 		this.etiquetaTiempo = etiquetaTiempo;
 		this.esPrioritario = esPrioritario;
-		this.nombreUsuario = nombreUsuario;
 		this.indiceEnMonticulo = -1;
 		this.prioridadCalculada = 0; // Se calculará después
 		this.claveOrdenacion = 0; // Se calculará después
@@ -82,14 +81,6 @@ public class NodoDocumento {
 
 	public void setEsPrioritario(boolean esPrioritario) {
 		this.esPrioritario = esPrioritario;
-	}
-
-	public String getNombreUsuario() {
-		return nombreUsuario;
-	}
-
-	public void setNombreUsuario(String nombreUsuario) {
-		this.nombreUsuario = nombreUsuario;
 	}
 
 	public int getIndiceEnMonticulo() {

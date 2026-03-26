@@ -434,7 +434,7 @@ public class principal extends javax.swing.JFrame {
 		Usuario user = MiTablaHash.buscarUsuario(nombreUsuario);
 
 		if (user != null) {
-			NodoDocumento nuevo = new NodoDocumento(nombreDoc, tamaño, tipoDoc, 0, false, nombreUsuario);
+			NodoDocumento nuevo = new NodoDocumento(nombreDoc, tamaño, tipoDoc, 0, false);
 			user.agregarDocumento(nuevo);
 			actualizarTablaDocumentos(user);
 
@@ -524,7 +524,7 @@ public class principal extends javax.swing.JFrame {
 			miReloj.incrementarTiempo();
 
 			// Eliminar del registro de cola en la tabla hash
-			String nombreUsuario = docImpreso.getNombreUsuario();
+			String nombreUsuario = MiTablaHash.buscarUsuarioPorDocumento(docImpreso.getNombre());
 			if (nombreUsuario != null) {
 				MiTablaHash.eliminarDocumentoDeCola(nombreUsuario, docImpreso.getNombre());
 			}
@@ -735,8 +735,8 @@ public class principal extends javax.swing.JFrame {
 			if (doc != null) {
 				String posicion = (i == 0) ? "*" + (i + 1) : " " + (i + 1);
 				String nombreTruncado = truncarNombre(doc.getNombre(), 18);
-				String nombreUsuario = (doc.getNombreUsuario() == null) ? "---" : doc.getNombreUsuario();
-				String usuarioTruncado = truncarNombre(nombreUsuario, 7);
+				String nombreUsuario = MiTablaHash.buscarUsuarioPorDocumento(doc.getNombre());
+				String usuarioTruncado = truncarNombre((nombreUsuario != null) ? "---" : nombreUsuario, 7);
 
 				sb.append(String.format("%-3s | %-20s | %-8s | %-10d | %-8d\n",
 					posicion, // Posición en la cola (con * para el primero)

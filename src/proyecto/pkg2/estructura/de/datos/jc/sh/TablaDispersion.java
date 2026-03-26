@@ -200,6 +200,29 @@ public class TablaDispersion {
 		}
 	}
 
+	/**
+	 * Busca el nombre del usuario propietario de un documento en cola.
+	 * Recorre la tabla hash para encontrar la relación usuario-documento.
+	 * 
+	 * @param nombreDocumento Nombre del documento a buscar
+	 * @return Nombre del usuario propietario, null si no se encuentra
+	 */
+	public String buscarUsuarioPorDocumento(String nombreDocumento) {
+		for (int i = 0; i < capacidad; i++) {
+			ListaEnlazada cubeta = tabla[i];
+			ListaEnlazada.NodoLista actual = cubeta.cabeza;
+			while (actual != null) {
+				InfoUsuario info = actual.dato;
+				InfoDocumentoEnCola infoDoc = info.buscarDocumentoEnCola(nombreDocumento);
+				if (infoDoc != null) {
+					return info.nombre;
+				}
+				actual = actual.siguiente;
+			}
+		}
+		return null;
+	}
+
 	private void rehash() {
 		int nuevaCapacidad = capacidad * 2;
 		ListaEnlazada[] nuevaTabla = new ListaEnlazada[nuevaCapacidad];
