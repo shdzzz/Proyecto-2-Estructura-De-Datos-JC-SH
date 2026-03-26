@@ -2,7 +2,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Tabla hash simple para guardar usuarios y registrar documentos en cola.
- * @author shdz
+ * @author shdz y Juan Coll
  */
 public class TablaDispersion {
     
@@ -33,7 +33,11 @@ public class TablaDispersion {
 		}
 		return hash;
 	}
-
+	/**
+	 * Metodo responsable de agregar usuario a la tabal Hash
+	 * @param nombre nombre del user
+	 * @param tipo tipo de usuario (ej. prioridad alta, media o baja)
+	 */
 	public void agregarUsuario(String nombre, String tipo, Usuario usuario) {
 		if ((double) tamaño / capacidad > 0.75) {
 			rehash();
@@ -222,7 +226,10 @@ public class TablaDispersion {
 		}
 		return null;
 	}
-
+	/**
+	 * metodo responsable en aumentar el tamaño de una tabla hash 
+	 * y recalcular la posición de todos sus elementos existentes
+	 */
 	private void rehash() {
 		int nuevaCapacidad = capacidad * 2;
 		ListaEnlazada[] nuevaTabla = new ListaEnlazada[nuevaCapacidad];
@@ -246,7 +253,9 @@ public class TablaDispersion {
 		this.capacidad = nuevaCapacidad;
 	}
 
-
+	/**
+	 * Clase sobre la info del usuario
+	 */
 	public static class InfoUsuario {
 
 		String nombre;
@@ -260,15 +269,25 @@ public class TablaDispersion {
 			this.usuario = usuario;
 			this.documentosEnCola = new ListaDocumentosEnCola();
 		}
-
+		/**
+		 * Getter responsable de retornar el nombre
+		 * @return 
+		 */
 		public String getNombre() {
 			return nombre;
 		}
-
+		/**
+		 * Getter responsable de retornar el tipo 
+		 * de usuario
+		 * @return 
+		 */
 		public String getTipo() {
 			return tipo;
 		}
-
+		/**
+		 * Getter responsable de retornar el usuario
+		 * @return 
+		 */
 		public Usuario getUsuario() {
 			return usuario;
 		}
@@ -317,11 +336,15 @@ public class TablaDispersion {
 			}
 		}
 	}
-
+	/**
+	 * subClase de simple de una lista enlazada
+	 */
 	private static class ListaEnlazada {
 
 		public NodoLista cabeza;
-
+		/**
+		 * subClase de ListaEnlazada que implementa una clase nodo
+		 */
 		private static class NodoLista {
 
 			InfoUsuario dato;
@@ -332,10 +355,11 @@ public class TablaDispersion {
 				this.siguiente = null;
 			}
 		}
-
+		/**Metodo responsable de insertar en la lista
+		 */
 		public void agregar(InfoUsuario dato) {
 			NodoLista nuevo = new NodoLista(dato);
-			if (cabeza == null) {
+			if (estaVacia()) {
 				cabeza = nuevo;
 			} else {
 				NodoLista actual = cabeza;
@@ -345,7 +369,9 @@ public class TablaDispersion {
 				actual.siguiente = nuevo;
 			}
 		}
-
+		/**
+		 * Metodo responsable de eliminar en la lista
+		 */
 		public boolean eliminar(String nombre) {
 			if (cabeza == null) {
 				return false;
@@ -366,11 +392,17 @@ public class TablaDispersion {
 			}
 			return false;
 		}
-
+		/**
+		 * Metodo para verificar si la lista esta vacia
+		 * @return 
+		 */
 		public boolean estaVacia() {
 			return cabeza == null;
 		}
-
+		/**
+		 * Getter responsable de obtener el tamaño de la lista
+		 * @return 
+		 */
 		public int getTamaño() {
 			int contador = 0;
 			NodoLista actual = cabeza;
@@ -398,7 +430,10 @@ public class TablaDispersion {
 				this.siguiente = null;
 			}
 		}
-		
+		/**
+		 * Metodo responsable en insertar en la ListaDocumentosEnCola
+		 * @param dato es la info que vamos a meter
+		 */
 		public void agregar(InfoDocumentoEnCola dato) {
 			NodoDocumentoCola nuevo = new NodoDocumentoCola(dato);
 			if (cabeza == null) {
@@ -411,7 +446,10 @@ public class TablaDispersion {
 				actual.siguiente = nuevo;
 			}
 		}
-		
+		/**
+		 * Metodo responsable de buscar cualquier documento
+		 * @param nombreDocumento es el nombre del documento a buscar
+		 */
 		public InfoDocumentoEnCola buscar(String nombreDocumento) {
 			NodoDocumentoCola actual = cabeza;
 			while (actual != null) {
@@ -422,7 +460,10 @@ public class TablaDispersion {
 			}
 			return null;
 		}
-		
+		/**
+		 * Metodo responsable de eliminar cualquier documento de la lista
+		 * @param nombreDocumento es el nombre del documento a eliminar
+		 */
 		public boolean eliminar(String nombreDocumento) {
 			if (cabeza == null) {
 				return false;
@@ -442,10 +483,6 @@ public class TablaDispersion {
 				actual = actual.siguiente;
 			}
 			return false;
-		}
-		
-		public boolean estaVacia() {
-			return cabeza == null;
 		}
 	}
 }

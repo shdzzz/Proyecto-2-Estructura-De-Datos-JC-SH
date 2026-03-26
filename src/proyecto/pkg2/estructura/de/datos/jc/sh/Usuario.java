@@ -3,7 +3,7 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 /**
  * Clase para guardar datos de un usuario.
  *
- * @author shdz
+ * @author shdz y Juan Coll
  */
 public class Usuario {
 
@@ -31,7 +31,10 @@ public class Usuario {
 	public String getNombre() {
 		return nombre;
 	}
-
+	/**
+	 * Getter responsable de obtener el primer documento
+	 * @return el primer documento
+	 */
 	public NodoDocumento getPrimerDocumento() {
 		return primerDocumento;
 	}

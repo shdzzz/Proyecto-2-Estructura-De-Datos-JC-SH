@@ -42,59 +42,88 @@ public class NodoDocumento {
 		this.enCola = false;
 		this.siguiente = null;
 	}
-
+	/**
+	 * Getter responsable de obtener el atributo nombre
+	 */
 	public String getNombre() {
 		return nombre;
 	}
-
+	/**
+	 * Setter responsable para asignar un nombre
+	 */
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-
+	/**
+	 * Getter responsable de obtener el atributo tamaño
+	 */
 	public int getTamaño() {
 		return tamaño;
 	}
-
+	/**
+	 * Setter responsable para asignar el tamaño
+	 */
 	public void setTamaño(int tamaño) {
 		this.tamaño = tamaño;
 	}
-
+	/**
+	 * Getter responsable de obtener el atributo tipo
+	 */
 	public String getTipo() {
 		return tipo;
 	}
-
+	/**
+	 * Setter responsable de asignar el tipo
+	 */
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
-
+	/**
+	 * Getter responsable de obtener el atributo EtiquetaTiempo
+	 */
 	public long getEtiquetaTiempo() {
 		return etiquetaTiempo;
 	}
-
+	/**
+	 * Setter responsable de asignar el tiempo
+	 * @param etiquetaTiempo 
+	 */
 	public void setEtiquetaTiempo(long etiquetaTiempo) {
 		this.etiquetaTiempo = etiquetaTiempo;
 	}
-
+	/**
+	 * Metodo para saber si es prioritario o no
+	 */
 	public boolean isEsPrioritario() {
 		return esPrioritario;
 	}
-
+	/**
+	 * Setter responsable de asignar si es prioritario
+	 */
 	public void setEsPrioritario(boolean esPrioritario) {
 		this.esPrioritario = esPrioritario;
 	}
-
+	/**
+	 * getter responsable de obetener el indicide en el monticulo
+	 */
 	public int getIndiceEnMonticulo() {
 		return indiceEnMonticulo;
 	}
-
+	/**
+	 * Setter encargado de asignar el inidice en el monticulo
+	 */
 	public void setIndiceEnMonticulo(int indiceEnMonticulo) {
 		this.indiceEnMonticulo = indiceEnMonticulo;
 	}
-
+	/**
+	 * Metodo responsable de obtener el siguiente
+	 */
 	public NodoDocumento getSiguiente() {
 		return siguiente;
 	}
-
+	/**
+	 * Setter responsable de asignar el siguiente
+	 */
 	public void setSiguiente(NodoDocumento siguiente) {
 		this.siguiente = siguiente;
 	}

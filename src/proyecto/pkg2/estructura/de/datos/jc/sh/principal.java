@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author andre
+ * @author Juan Coll
  */
 public class principal extends javax.swing.JFrame {
 
@@ -765,17 +765,12 @@ public class principal extends javax.swing.JFrame {
 	 */
 	public void actualizarVistaArbol() {
 		VistaArbol.setText(""); // Limpiar JTextArea
-
-		// IMPORTANTE: Forzar fuente Monospaced por código si no lo hiciste en el diseño
 		VistaArbol.setFont(new java.awt.Font("Monospaced", 0, 11));
-
 		int n = MiMonticulo.getTamaño();
-
 		if (n == 0) {
 			VistaArbol.setText("\n   [ La cola de impresión está vacía ]");
 			return;
 		}
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("      === ESTRUCTURA JERÁRQUICA (MIN-HEAP) ===\n");
 		sb.append("==================================================\n");
@@ -785,12 +780,9 @@ public class principal extends javax.swing.JFrame {
 
 		// Calculamos la altura del árbol
 		int altura = (int) (Math.log(n) / Math.log(2)) + 1;
-
 		// Variables para controlar el espaciado
 		int anchoNodo = 25; // Ancho ampliado para mostrar nombres completos "[nombre_largo (P:XXXXX)]"
 		int separation = 2; // Espacio reducido entre hermanos para compensar
-
-		// El ancho del último nivel determina el espaciado base
 		int maxNodosUltimoNivel = (int) Math.pow(2, altura - 1);
 		int anchoNivelBase = maxNodosUltimoNivel * (anchoNodo + separation);
 
@@ -808,12 +800,12 @@ public class principal extends javax.swing.JFrame {
 			int espacioNivel = anchoNivelBase / nodosEnNivel;
 			int espacioInicial = (espacioNivel / 2) - (anchoNodo / 2);
 
-			// 1. Espacios iniciales del nivel (sangría de pirámide)
+			// Espacios iniciales del nivel (sangría de pirámide)
 			for (int e = 0; e < espacioInicial; e++) {
 				sb.append(" ");
 			}
 
-			// 2. Imprimir los nodos de este nivel
+			// Imprimir los nodos de este nivel
 			for (int i = 0; i < nodosEnNivel && indiceActual < n; i++) {
 				NodoDocumento doc = MiMonticulo.getNodo(indiceActual);
 
@@ -839,7 +831,7 @@ public class principal extends javax.swing.JFrame {
 				indiceActual++;
 			}
 
-			// 3. Salto de línea para el siguiente nivel
+			// Salto de línea para el siguiente nivel
 			sb.append("\n\n");
 
 			// El siguiente nivel tiene el doble de nodos
