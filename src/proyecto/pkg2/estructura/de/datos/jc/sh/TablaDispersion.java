@@ -2,27 +2,34 @@ package proyecto.pkg2.estructura.de.datos.jc.sh;
 
 /**
  * Tabla hash simple para guardar usuarios y registrar documentos en cola.
+ *
  * @author shdz y Juan Coll
  */
 public class TablaDispersion {
-    
-    private ListaEnlazada[] tabla;
-    private int capacidad;
-    private int tamaño;
-    
-    /**
-     * Constructor que crea una tabla hash con capacidad inicial de 16.
-     */
-    public TablaDispersion() {
-        this.capacidad = 16;
-        this.tabla = new ListaEnlazada[capacidad];
-        this.tamaño = 0;
-        
-        for (int i = 0; i < capacidad; i++) {
-            tabla[i] = new ListaEnlazada();
-        }
-    }
 
+	private ListaEnlazada[] tabla;
+	private int capacidad;
+	private int tamaño;
+
+	/**
+	 * Constructor que crea una tabla hash con capacidad inicial de 16.
+	 */
+	public TablaDispersion() {
+		this.capacidad = 16;
+		this.tabla = new ListaEnlazada[capacidad];
+		this.tamaño = 0;
+
+		for (int i = 0; i < capacidad; i++) {
+			tabla[i] = new ListaEnlazada();
+		}
+	}
+
+	/**
+	 * Genera un índice para la tabla a partir de un nombre.
+	 *
+	 * * @param clave El nombre del usuario.
+	 * @return La posición en la tabla (número positivo).
+	 */
 	private int funcionHash(String clave) {
 		int hash = 0;
 		for (int i = 0; i < clave.length(); i++) {
@@ -33,8 +40,20 @@ public class TablaDispersion {
 		}
 		return hash;
 	}
+
+	/**
+	 * Verifica si la tabla hash no contiene ningún usuario.
+	 *
+	 * @return true si la tabla está vacía (tamaño 0), false en caso
+	 * contrario.
+	 */
+	public boolean estaVacia() {
+		return this.tamaño == 0;
+	}
+
 	/**
 	 * Metodo responsable de agregar usuario a la tabal Hash
+	 *
 	 * @param nombre nombre del user
 	 * @param tipo tipo de usuario (ej. prioridad alta, media o baja)
 	 */
@@ -60,8 +79,8 @@ public class TablaDispersion {
 			return null;
 		}
 		ListaEnlazada.NodoLista actual = Cubeta.cabeza;
-		while (actual != null){
-			if(actual.dato.getNombre().equalsIgnoreCase(nombre)){
+		while (actual != null) {
+			if (actual.dato.getNombre().equalsIgnoreCase(nombre)) {
 				return actual.dato.getUsuario();
 			}
 			actual = actual.siguiente;
@@ -81,7 +100,7 @@ public class TablaDispersion {
 
 		boolean eliminado = cubeta.eliminar(nombre);
 
-		if (eliminado && cubeta.estaVacia()) {
+		if (eliminado) {
 			tamaño--;
 		}
 
@@ -117,19 +136,19 @@ public class TablaDispersion {
 	}
 
 	/**
-	 * Registra un documento en cola de impresión.
-	 * Almacena la información para poder eliminarlo posteriormente.
-	 * 
+	 * Registra un documento en cola de impresión. Almacena la información
+	 * para poder eliminarlo posteriormente.
+	 *
 	 * @param nombreUsuario Nombre del usuario propietario
 	 * @param documento Documento en cola
 	 * @param indiceEnMonticulo Posición en el montículo
 	 * @param etiquetaTiempo Etiqueta de tiempo para prioridad
 	 */
-	public void registrarDocumentoEnCola(String nombreUsuario, NodoDocumento documento, 
-									   int indiceEnMonticulo, long etiquetaTiempo) {
+	public void registrarDocumentoEnCola(String nombreUsuario, NodoDocumento documento,
+		int indiceEnMonticulo, long etiquetaTiempo) {
 		int indice = funcionHash(nombreUsuario);
 		ListaEnlazada cubeta = tabla[indice];
-		
+
 		// Buscar al usuario y agregar el documento a su lista de encolados
 		ListaEnlazada.NodoLista actual = cubeta.cabeza;
 		while (actual != null) {
@@ -142,8 +161,9 @@ public class TablaDispersion {
 	}
 
 	/**
-	 * Busca un documento en cola por nombre de usuario y nombre de documento.
-	 * 
+	 * Busca un documento en cola por nombre de usuario y nombre de
+	 * documento.
+	 *
 	 * @param nombreUsuario Nombre del usuario
 	 * @param nombreDocumento Nombre del documento
 	 * @return Información del documento en cola, null si no se encuentra
@@ -151,7 +171,7 @@ public class TablaDispersion {
 	public InfoDocumentoEnCola buscarDocumentoEnCola(String nombreUsuario, String nombreDocumento) {
 		int indice = funcionHash(nombreUsuario);
 		ListaEnlazada cubeta = tabla[indice];
-		
+
 		ListaEnlazada.NodoLista actual = cubeta.cabeza;
 		while (actual != null) {
 			if (actual.dato.nombre.equals(nombreUsuario)) {
@@ -164,7 +184,7 @@ public class TablaDispersion {
 
 	/**
 	 * Elimina un documento del registro de cola.
-	 * 
+	 *
 	 * @param nombreUsuario Nombre del usuario
 	 * @param nombreDocumento Nombre del documento
 	 * @return true si se eliminó correctamente
@@ -172,7 +192,7 @@ public class TablaDispersion {
 	public boolean eliminarDocumentoDeCola(String nombreUsuario, String nombreDocumento) {
 		int indice = funcionHash(nombreUsuario);
 		ListaEnlazada cubeta = tabla[indice];
-		
+
 		ListaEnlazada.NodoLista actual = cubeta.cabeza;
 		while (actual != null) {
 			if (actual.dato.nombre.equals(nombreUsuario)) {
@@ -185,7 +205,7 @@ public class TablaDispersion {
 
 	/**
 	 * Actualiza el índice de un documento en el montículo.
-	 * 
+	 *
 	 * @param nombreUsuario Nombre del usuario
 	 * @param nombreDocumento Nombre del documento
 	 * @param nuevoIndice Nuevo índice en el montículo
@@ -193,7 +213,7 @@ public class TablaDispersion {
 	public void actualizarIndiceEnMonticulo(String nombreUsuario, String nombreDocumento, int nuevoIndice) {
 		int indice = funcionHash(nombreUsuario);
 		ListaEnlazada cubeta = tabla[indice];
-		
+
 		ListaEnlazada.NodoLista actual = cubeta.cabeza;
 		while (actual != null) {
 			if (actual.dato.nombre.equals(nombreUsuario)) {
@@ -207,7 +227,7 @@ public class TablaDispersion {
 	/**
 	 * Busca el nombre del usuario propietario de un documento en cola.
 	 * Recorre la tabla hash para encontrar la relación usuario-documento.
-	 * 
+	 *
 	 * @param nombreDocumento Nombre del documento a buscar
 	 * @return Nombre del usuario propietario, null si no se encuentra
 	 */
@@ -226,9 +246,10 @@ public class TablaDispersion {
 		}
 		return null;
 	}
+
 	/**
-	 * metodo responsable en aumentar el tamaño de una tabla hash 
-	 * y recalcular la posición de todos sus elementos existentes
+	 * metodo responsable en aumentar el tamaño de una tabla hash y
+	 * recalcular la posición de todos sus elementos existentes
 	 */
 	private void rehash() {
 		int nuevaCapacidad = capacidad * 2;
@@ -236,7 +257,7 @@ public class TablaDispersion {
 		for (int i = 0; i < nuevaCapacidad; i++) {
 			nuevaTabla[i] = new ListaEnlazada();
 		}
-		
+
 		// Reinsertar todos los elementos existentes
 		for (int i = 0; i < capacidad; i++) {
 			ListaEnlazada cubeta = tabla[i];
@@ -248,7 +269,7 @@ public class TablaDispersion {
 				actual = actual.siguiente;
 			}
 		}
-		
+
 		this.tabla = nuevaTabla;
 		this.capacidad = nuevaCapacidad;
 	}
@@ -269,24 +290,29 @@ public class TablaDispersion {
 			this.usuario = usuario;
 			this.documentosEnCola = new ListaDocumentosEnCola();
 		}
+
 		/**
 		 * Getter responsable de retornar el nombre
-		 * @return 
+		 *
+		 * @return
 		 */
 		public String getNombre() {
 			return nombre;
 		}
+
 		/**
-		 * Getter responsable de retornar el tipo 
-		 * de usuario
-		 * @return 
+		 * Getter responsable de retornar el tipo de usuario
+		 *
+		 * @return
 		 */
 		public String getTipo() {
 			return tipo;
 		}
+
 		/**
 		 * Getter responsable de retornar el usuario
-		 * @return 
+		 *
+		 * @return
 		 */
 		public Usuario getUsuario() {
 			return usuario;
@@ -294,7 +320,7 @@ public class TablaDispersion {
 
 		/**
 		 * Agrega un documento a la lista de documentos en cola.
-		 * 
+		 *
 		 * @param documento Documento en cola
 		 * @param indiceEnMonticulo Posición en el montículo
 		 * @param etiquetaTiempo Etiqueta de tiempo
@@ -305,7 +331,7 @@ public class TablaDispersion {
 
 		/**
 		 * Busca un documento en cola por nombre.
-		 * 
+		 *
 		 * @param nombreDocumento Nombre del documento
 		 * @return Información del documento en cola
 		 */
@@ -315,7 +341,7 @@ public class TablaDispersion {
 
 		/**
 		 * Elimina un documento de la lista de encolados.
-		 * 
+		 *
 		 * @param nombreDocumento Nombre del documento
 		 * @return true si se eliminó correctamente
 		 */
@@ -325,7 +351,7 @@ public class TablaDispersion {
 
 		/**
 		 * Actualiza el índice de un documento en el montículo.
-		 * 
+		 *
 		 * @param nombreDocumento Nombre del documento
 		 * @param nuevoIndice Nuevo índice
 		 */
@@ -336,12 +362,14 @@ public class TablaDispersion {
 			}
 		}
 	}
+
 	/**
 	 * subClase de simple de una lista enlazada
 	 */
 	private static class ListaEnlazada {
 
 		public NodoLista cabeza;
+
 		/**
 		 * subClase de ListaEnlazada que implementa una clase nodo
 		 */
@@ -355,7 +383,9 @@ public class TablaDispersion {
 				this.siguiente = null;
 			}
 		}
-		/**Metodo responsable de insertar en la lista
+
+		/**
+		 * Metodo responsable de insertar en la lista
 		 */
 		public void agregar(InfoUsuario dato) {
 			NodoLista nuevo = new NodoLista(dato);
@@ -369,6 +399,7 @@ public class TablaDispersion {
 				actual.siguiente = nuevo;
 			}
 		}
+
 		/**
 		 * Metodo responsable de eliminar en la lista
 		 */
@@ -392,16 +423,20 @@ public class TablaDispersion {
 			}
 			return false;
 		}
+
 		/**
 		 * Metodo para verificar si la lista esta vacia
-		 * @return 
+		 *
+		 * @return
 		 */
 		public boolean estaVacia() {
 			return cabeza == null;
 		}
+
 		/**
 		 * Getter responsable de obtener el tamaño de la lista
-		 * @return 
+		 *
+		 * @return
 		 */
 		public int getTamaño() {
 			int contador = 0;
@@ -418,20 +453,23 @@ public class TablaDispersion {
 	 * Lista enlazada para gestionar documentos en cola de un usuario.
 	 */
 	private static class ListaDocumentosEnCola {
-		
+
 		private NodoDocumentoCola cabeza;
-		
+
 		private static class NodoDocumentoCola {
+
 			InfoDocumentoEnCola dato;
 			NodoDocumentoCola siguiente;
-			
+
 			NodoDocumentoCola(InfoDocumentoEnCola dato) {
 				this.dato = dato;
 				this.siguiente = null;
 			}
 		}
+
 		/**
 		 * Metodo responsable en insertar en la ListaDocumentosEnCola
+		 *
 		 * @param dato es la info que vamos a meter
 		 */
 		public void agregar(InfoDocumentoEnCola dato) {
@@ -446,8 +484,10 @@ public class TablaDispersion {
 				actual.siguiente = nuevo;
 			}
 		}
+
 		/**
 		 * Metodo responsable de buscar cualquier documento
+		 *
 		 * @param nombreDocumento es el nombre del documento a buscar
 		 */
 		public InfoDocumentoEnCola buscar(String nombreDocumento) {
@@ -460,20 +500,23 @@ public class TablaDispersion {
 			}
 			return null;
 		}
+
 		/**
-		 * Metodo responsable de eliminar cualquier documento de la lista
+		 * Metodo responsable de eliminar cualquier documento de la
+		 * lista
+		 *
 		 * @param nombreDocumento es el nombre del documento a eliminar
 		 */
 		public boolean eliminar(String nombreDocumento) {
 			if (cabeza == null) {
 				return false;
 			}
-			
+
 			if (cabeza.dato.getDocumento().getNombre().equals(nombreDocumento)) {
 				cabeza = cabeza.siguiente;
 				return true;
 			}
-			
+
 			NodoDocumentoCola actual = cabeza;
 			while (actual.siguiente != null) {
 				if (actual.siguiente.dato.getDocumento().getNombre().equals(nombreDocumento)) {

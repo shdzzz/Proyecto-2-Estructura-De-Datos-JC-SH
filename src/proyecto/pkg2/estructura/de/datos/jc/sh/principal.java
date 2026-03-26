@@ -36,7 +36,9 @@ public class principal extends javax.swing.JFrame {
 		miReloj.reiniciar();
 		this.setTitle("Cola de Prioridad y Hash Tables: JC-SH");
 		/**
-		 * Estas lineas son necesarias para que, cuando el usuario cierre el programa en donde esta la X, le pregunte si quiere guardar, o no el documento
+		 * Estas lineas son necesarias para que, cuando el usuario
+		 * cierre el programa en donde esta la X, le pregunte si quiere
+		 * guardar, o no el documento
 		 */
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -323,16 +325,16 @@ public class principal extends javax.swing.JFrame {
 				doc.setEtiquetaTiempo(tiempo);
 				doc.setEsPrioritario(esPrioritario.isSelected());
 				int prioridadUsuario = user.getPrioridad();
-				
+
 				doc.calcularClaveOrdenacion(prioridadUsuario);
-				
+
 				if (MiMonticulo.insertar(doc)) {
 					doc.setEnCola(true);
-					
+
 					// Registrar documento en cola en la tabla hash
 					int indiceInsertado = MiMonticulo.getTamaño() - 1; // Última posición
 					MiTablaHash.registrarDocumentoEnCola(nombreUser, doc, indiceInsertado, doc.getEtiquetaTiempo());
-					
+
 					actualizarTablaDocumentos(user);
 					actualizarVistaLista();
 					actualizarVistaArbol();
@@ -343,7 +345,8 @@ public class principal extends javax.swing.JFrame {
 		}
         }//GEN-LAST:event_MnadarImprimirActionPerformed
 	/**
-	 * Metodo responsable de cargar el archivo CSV, usando metodos de la clase Manejo de archivos
+	 * Metodo responsable de cargar el archivo CSV, usando metodos de la
+	 * clase Manejo de archivos
 	 */
         private void CargarCSVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CargarCSVActionPerformed
 		// TODO add your handling code here:
@@ -404,7 +407,8 @@ public class principal extends javax.swing.JFrame {
         }//GEN-LAST:event_AgregarUsuarioActionPerformed
 	/**
 	 * Metodo responsable del funcionamiento del boton de crearDocumento
-	 * @param evt 
+	 *
+	 * @param evt
 	 */
         private void CrearDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CrearDocActionPerformed
 		// TODO add your handling code here:
@@ -425,6 +429,10 @@ public class principal extends javax.swing.JFrame {
 		int tamaño;
 		try {
 			tamaño = Integer.parseInt(tamañoStr);
+			if (tamaño <= 0) {
+				JOptionPane.showMessageDialog(this, "El documento debe tener al menos 1 página.");
+				return;
+			}
 		} catch (NumberFormatException e) {
 			JOptionPane.showMessageDialog(this, "El tamaño debe ser un número.");
 			return;
@@ -443,7 +451,7 @@ public class principal extends javax.swing.JFrame {
 
         }//GEN-LAST:event_CrearDocActionPerformed
 	/**
-	 * Metodo responsable del funcionamiento del boton de eliminar Usuarios 
+	 * Metodo responsable del funcionamiento del boton de eliminar Usuarios
 	 */
         private void EliminarUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EliminarUsuariosActionPerformed
 		// TODO add your handling code here:
@@ -469,11 +477,11 @@ public class principal extends javax.swing.JFrame {
 		}
 
 		if (tieneDocumentosEnCola) {
-			JOptionPane.showMessageDialog(this, 
-				"No se puede eliminar el usuario '" + nombreUsuario + 
-				"' porque tiene documentos en la cola de impresión.\n" +
-				"Primero cancele sus documentos de la cola.", 
-				"Usuario con documentos en cola", 
+			JOptionPane.showMessageDialog(this,
+				"No se puede eliminar el usuario '" + nombreUsuario
+				+ "' porque tiene documentos en la cola de impresión.\n"
+				+ "Primero cancele sus documentos de la cola.",
+				"Usuario con documentos en cola",
 				JOptionPane.WARNING_MESSAGE);
 			return;
 		}
@@ -493,8 +501,8 @@ public class principal extends javax.swing.JFrame {
 		}
         }//GEN-LAST:event_EliminarUsuariosActionPerformed
 	/**
-	 * Metodo responsable del funcionamiento de la lista de usuarios
-	 * esto ayuda a que cuando se agregue un usuario este aparezca en el JList
+	 * Metodo responsable del funcionamiento de la lista de usuarios esto
+	 * ayuda a que cuando se agregue un usuario este aparezca en el JList
 	 */
         private void ListadeUsuariosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_ListadeUsuariosValueChanged
 		// TODO add your handling code here:
@@ -509,7 +517,8 @@ public class principal extends javax.swing.JFrame {
 		}
         }//GEN-LAST:event_ListadeUsuariosValueChanged
 	/**
-	 * Metodo responsable del funcionamiento del boton de liberar impresora (Imprime)
+	 * Metodo responsable del funcionamiento del boton de liberar impresora
+	 * (Imprime)
 	 */
         private void LibrerarImpresoraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LibrerarImpresoraActionPerformed
 		// Liberar Impresora - Eliminar el documento con mayor prioridad
@@ -616,10 +625,10 @@ public class principal extends javax.swing.JFrame {
 					// AÑADIR ESTAS LÍNEAS:
 					docACancelar.setEnCola(false);
 					docACancelar.setIndiceEnMonticulo(-1);
-					
+
 					// Eliminar del registro de cola en la tabla hash
 					MiTablaHash.eliminarDocumentoDeCola(nombreUser, docACancelar.getNombre());
-					
+
 					// Incrementar el tiempo del reloj
 					miReloj.incrementarTiempo();
 
@@ -640,7 +649,7 @@ public class principal extends javax.swing.JFrame {
         }//GEN-LAST:event_CancelarColaActionPerformed
 
         private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarEnColaActionPerformed
-                // TODO add your handling code here:
+		// TODO add your handling code here:
 		// no deja borrar este metodo, esta bug
         }//GEN-LAST:event_CancelarEnColaActionPerformed
 
@@ -678,9 +687,11 @@ public class principal extends javax.swing.JFrame {
 	private String[][] recolectarDatos() {
 		/**
 		 * Recolecta los datos de los usuarios desde la lista de la GUI.
-		 * Extrae el nombre y tipo de cada usuario para ser guardados en archivo.
-		 * 
-		 * @return Matriz de String [n][2] donde [n][0] es nombre y [n][1] es tipo
+		 * Extrae el nombre y tipo de cada usuario para ser guardados en
+		 * archivo.
+		 *
+		 * @return Matriz de String [n][2] donde [n][0] es nombre y
+		 * [n][1] es tipo
 		 */
 		javax.swing.ListModel modelo = ListadeUsuarios.getModel();
 		int cantidad = modelo.getSize();
@@ -706,9 +717,10 @@ public class principal extends javax.swing.JFrame {
 	 * Metodo responsabel de actualizar la vista de lista este metodo se
 	 * usara cada vez que el usario agrgue un documento a la cola de
 	 * impresion.
-	 * 
-	 * Muestra la cola de impresión como una secuencia ordenada por prioridad.
-	 * Incluye información de tiempo actual, cantidad de documentos y leyenda.
+	 *
+	 * Muestra la cola de impresión como una secuencia ordenada por
+	 * prioridad. Incluye información de tiempo actual, cantidad de
+	 * documentos y leyenda.
 	 */
 	public void actualizarVistaLista() {
 
@@ -758,10 +770,11 @@ public class principal extends javax.swing.JFrame {
 	 * Metodo responsable de actualizar la vista de arbol este metodo se
 	 * aplicara cada vez que el usario agregue un documento a la cola de
 	 * impresion.
-	 * 
-	 * Muestra la cola de impresión como una estructura jerárquica (min-heap).
-	 * Incluye información de tiempo actual, cantidad de documentos y leyenda.
-	 * Resalta la raíz como el siguiente documento a imprimir.
+	 *
+	 * Muestra la cola de impresión como una estructura jerárquica
+	 * (min-heap). Incluye información de tiempo actual, cantidad de
+	 * documentos y leyenda. Resalta la raíz como el siguiente documento a
+	 * imprimir.
 	 */
 	public void actualizarVistaArbol() {
 		VistaArbol.setText(""); // Limpiar JTextArea
@@ -847,9 +860,10 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Método auxiliar para centrar texto en la vista de árbol.
-	 * Calcula y distribuye espacios para centrar el texto dentro de un ancho determinado.
-	 * 
+	 * Método auxiliar para centrar texto en la vista de árbol. Calcula y
+	 * distribuye espacios para centrar el texto dentro de un ancho
+	 * determinado.
+	 *
 	 * @param texto Texto a centrar
 	 * @param longitud Longitud total del espacio disponible
 	 * @return Texto centrado con espacios a izquierda y derecha
@@ -876,7 +890,7 @@ public class principal extends javax.swing.JFrame {
 	/**
 	 * Método auxiliar para truncar nombres largos en la vista de lista.
 	 * Asegura que los nombres no desborden el formato de la tabla.
-	 * 
+	 *
 	 * @param nombre Nombre original a truncar
 	 * @param longitudMax Longitud máxima permitida
 	 * @return Nombre truncado con punto suspensivo si excede el límite
@@ -889,11 +903,14 @@ public class principal extends javax.swing.JFrame {
 	}
 
 	/**
-	 * Metodo responsable de cerrar la aplicacion.
-	 * Ofrece la opción de guardar los usuarios en archivo CSV antes de salir.
-	 * Gestiona el cierre seguro de la aplicación con confirmación del usuario.
+	 * Metodo responsable de cerrar la aplicacion. Ofrece la opción de
+	 * guardar los usuarios en archivo CSV antes de salir. Gestiona el
+	 * cierre seguro de la aplicación con confirmación del usuario.
 	 */
 	private void cerrarAplicacion() {
+		if (MiTablaHash.estaVacia()) {
+			System.exit(0);
+		}
 		int opcion = javax.swing.JOptionPane.showConfirmDialog(
 			this,
 			"¿Desea guardar los usuarios en el archivo CSV antes de salir?",
@@ -908,7 +925,6 @@ public class principal extends javax.swing.JFrame {
 			if (exito) {
 				System.exit(0);
 			}
-
 		} else if (opcion == javax.swing.JOptionPane.NO_OPTION) {
 			System.exit(0);
 		}
